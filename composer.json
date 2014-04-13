@@ -1,0 +1,6 @@
+{
+    "require": {
+        "guzzlehttp/guzzle": "~4.0",
+        "gregwar/cache": "dev-master"
+    }
+}
