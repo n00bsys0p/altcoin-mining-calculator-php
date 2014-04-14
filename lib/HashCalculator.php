@@ -22,9 +22,6 @@ class HashCalculator {
     protected $client = NULL;
     protected $calculator = NULL;
 
-    // The viewable content displayed by the calculator
-    protected $view = NULL;
-
     public function __construct($config, $explorer)
     {
         $this->config    = $config;
@@ -44,7 +41,8 @@ class HashCalculator {
     }
 
     /**
-     * Get fiat rate from bitcoinaverage.com
+     * Get fiat rates for the altcoin for a single
+     * or list of fiat currencies.
      */
     public function getFiatRate($fiat_list)
     {
@@ -66,15 +64,21 @@ class HashCalculator {
         return $list;
     }
 
+    /**
+     * Find the value for a single fiat currency.
+     */
     protected function processFiat($fiat)
     {
         $cache_opts = array('max-age' => CACHE_EXCHANGE_TIMEOUT);
         $cache_filename = 'btcticker_' . strtoupper($fiat);
-        $url = $this->config['btc_ticker']['url'];
+        $url = $this->config['ticker']['url'];
 
-        $fiat = ($this->config['btc_ticker']['uppercase']) ? strtoupper($fiat) : strtolower($fiat);
+        // Make sure the fiat code 3 is in the correct format for the API
+        $ticker_requires_ucase = $this->config['ticker']['uppercase'];
+        $fiat = ($ticker_requires_ucase) ? strtoupper($fiat) : strtolower($fiat);
 
-        $url = preg_replace('/\{CURR\}/', $fiat, $url);
+        // Replace CURR with 
+        $url = preg_replace('/\{\{CURR\\}}/', $fiat, $url);
         $response = $this->client->get($url, $cache_filename, $cache_opts, NULL); // We want a NULL response if it fails
 
         $json = (is_null($response)) ? NULL : json_decode($response);
@@ -89,7 +93,7 @@ class HashCalculator {
         return Calculator::formatAsSatoshi($rate);
     }
 
-    public function calculateForHashRate($hashrate, $format, $fiat = 'USD')
+    public function calculateForHashRate($hashrate, $fiat = 'USD')
     {
         $diff     = $this->getDifficulty();
         $reward   = $this->getBlockReward();
@@ -97,22 +101,9 @@ class HashCalculator {
         $btcprice = $this->getFiatRate($fiat);
 
         $this->calculator = new Calculator($diff, $reward, $btcrate, $btcprice);
-        $hashrate_real = $hashrate * $format; // Convert hash rate to base h/s
-        $result = $this->calculator->calculatePerDay($hashrate_real);
-
-        $this->view = new TemplateProcessor;
+        $result = $this->calculator->calculatePerDay($hashrate);
 
         return $result;
-    }
-
-    public function generateTemplate($title, $body)
-    {
-        if(is_null($this->view))
-            die('You must have already made calculations in order to generate a template.');
-
-        $output = $this->view->process($title, $body);
-
-        return $output;
     }
 }
 

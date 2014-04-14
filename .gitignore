@@ -1,4 +1,4 @@
 cache/*
 vendor/*
 composer.lock
-config/app.php
+config/*.yml

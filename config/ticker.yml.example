@@ -1,0 +1,2 @@
+url: https://api.bitcoinaverage.com/ticker/{{CURR}}
+uppercase: true

@@ -47,12 +47,22 @@ class Exchange
 
     private function _getJsonValue($json_string, $key_string)
     {
+        // If something's wrong just enter 0 for now
+        if($json_string === 0)
+            return 0;
+
         $keys_ary = explode('.', $key_string);
 
         $result = json_decode($json_string);
 
-        foreach($keys_ary as $key) {
-            $result = (is_array($result)) ? $result[$key] : $result->$key;
+        if($result)
+        {
+            foreach($keys_ary as $key)
+                $result = (is_array($result)) ? $result[$key] : $result->$key;
+        }
+        else
+        {
+            $result = 0;
         }
 
         return $result;

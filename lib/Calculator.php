@@ -31,6 +31,34 @@ class Calculator {
                      'fiat_per_day'  => $fpd);
     }
 
+    public static function formatHashRate($hashrate)
+    {
+        if($hashrate > 1000000000000)
+        {
+            $hashrate /= 1000000000000;
+            $suffix = 'P';
+        }
+        elseif($hashrate > 1000000000)
+        {
+            $hashrate /= 1000000000;
+            $suffix = 'T';
+        }
+        elseif($hashrate > 1000000)
+        {
+            $hashrate /= 1000000;
+            $suffix = 'M';
+        }
+        elseif($hashrate > 1000)
+        {
+            $hashrate /= 1000;
+            $suffix = 'K';
+        }
+        elseif($hashrate > 0)
+            $suffix = '';
+
+        return $hashrate . ' ' . $suffix . 'h/s';
+    }
+
     protected function cleanRound($number)
     {
         if($number > 100)
@@ -62,7 +90,7 @@ class Calculator {
         $blockreward = $this->getBlockReward();
         $difficulty = $this->getDifficulty();
 
-        $coins_per_day = $seconds_per_day * $blockreward * $hashrate / ($difficulty * (pow(2, 48) / hexdec('0x00000000ffff')));
+        $coins_per_day = ($seconds_per_day * $blockreward * $hashrate) / ($difficulty * (pow(2, 48) / hexdec('0x00000000ffff')));
 
         $this->coinsPerDay = $this->cleanRound($coins_per_day);
     }
