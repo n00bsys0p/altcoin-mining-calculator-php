@@ -1,6 +1,7 @@
 {
     "require": {
         "guzzlehttp/guzzle": "~4.0",
-        "gregwar/cache": "dev-master"
+        "gregwar/cache": "dev-master",
+        "symfony/yaml": "2.4.*@dev"
     }
 }
