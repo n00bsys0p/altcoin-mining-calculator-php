@@ -4,6 +4,12 @@ namespace n00bsys0p;
 
 require_once('CachingHttpClient.php');
 
+/**
+ * A single Exchange object
+ *
+ * This represents a single exchange, as found in the exchange
+ * config file.
+ */
 class Exchange
 {
     protected $name = NULL;
@@ -11,6 +17,15 @@ class Exchange
     protected $url = NULL;
     protected $json_key = NULL;
 
+    /**
+     * Constructor
+     *
+     * Construct all the internal objects and variables
+     * required to interact with the exchange's public
+     * API.
+     *
+     * @param array $config A single exchange's configuration
+     */
     public function __construct($config)
     {
         $this->client = new CachingHttpClient;
@@ -35,6 +50,15 @@ class Exchange
         }
     }
 
+    /**
+     * Return the BTC rate for the current coin
+     *
+     * Use the exchange's public API via HTTP to find out the
+     * current rates. Results are cached according to the configured
+     * CACHE_EXCHANGE_TIMEOUT
+     *
+     * @return float
+     */
     public function getBtcRate()
     {
         $cache_opts = array('max-age' => CACHE_EXCHANGE_TIMEOUT); // 15 minutes cache BTC to altcoin rate
@@ -45,6 +69,18 @@ class Exchange
         return $response;
     }
 
+    /**
+     * Parse a path from a json string given a serialised key
+     *
+     * This will split $key_string by delimiter ".", and find
+     * the relevant element of the JSON array. No protection
+     * against not finding the element though, so make sure your
+     * config is right
+     *
+     * @param  string $json_string The string form of a JSON object
+     * @param  string $key_string  A . delimited string denoting nested children of the JSON object
+     * @return mixed
+     */
     private function _getJsonValue($json_string, $key_string)
     {
         // If something's wrong just enter 0 for now

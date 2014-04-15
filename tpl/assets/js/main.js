@@ -1,19 +1,23 @@
-function hideOtherCurrencies()
-{
+function hideOtherCurrencies() {
     $('[class^="curr-"]').not('[class=curr-USD]').hide();
 }
 
-function switchCurrency()
-{
-    $('[class^="curr-"]').each(obj, function() {
-        if(obj.is(':visible'))
+$('#switch').click(function() {
+
+    // Rotate the icon
+    $(this).rotate({
+        bind:
         {
-            obj.hide();
+            click: function() {
+                var deg = 360;// / $('th span[class^="curr-"]').length;
+                switchRotation += deg;
+                console.error('TRYING TO ROTATE TO: ' + switchRotation);
+                $(this).rotate({animateTo: switchRotation});
+            }
         }
     });
-}
 
-$('#switch').click(function() {
+    // Cycle to the next currency
     var search = 'span[class^="curr-"]';
     spans = $('th ' + search);
 

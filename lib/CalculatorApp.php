@@ -5,6 +5,13 @@ namespace n00bsys0p;
 require_once('HashCalculator.php');
 require_once('ViewBuilder.php');
 
+/**
+ * Cryptocurrency Hash Calculator Application
+ *
+ * The container for the entire application. This should
+ * make deployment as simple as instantiating the class
+ * and calling run.
+ */
 class CalculatorApp
 {
     protected $config         = NULL;
@@ -13,6 +20,14 @@ class CalculatorApp
     protected $data           = array();
     protected $output         = NULL;
 
+    /**
+     * Constructor
+     *
+     * Set up the application configuration based on the
+     * configuration array passed.
+     *
+     * @param array $config The application configuration
+     */
     public function __construct($config)
     {
         $this->config = $config;
@@ -31,6 +46,9 @@ class CalculatorApp
 
     /**
      * Run the application from start to finish
+     *
+     * Nothing more to say about this - it runs all the steps the app
+     * requires to run from start to finish.
      */
     public function run()
     {
@@ -43,6 +61,9 @@ class CalculatorApp
 
     /**
      * Initialise the calculator application
+     *
+     * This sanity checks and sets sane defaults for the
+     * user-defined variables.
      */
     protected function init()
     {
@@ -60,6 +81,10 @@ class CalculatorApp
 
     /**
      * Retrieve the required data
+     *
+     * Passes the configured currencies to the calculator to get daily
+     * earnings data on each. This must be run after the application has
+     * been initialised to prepare the data for formatting.
      */
     protected function requestData()
     {
@@ -70,6 +95,11 @@ class CalculatorApp
 
     /**
      * Prepare the displayed view
+     *
+     * This puts together all the currently prepared information into a browser
+     * compatible display format. It uses the local ViewBuilder instance to
+     * do this. This must be run after requestData, as before that there is no
+     * data to prepare.
      */
     protected function prepareView()
     {
@@ -106,6 +136,13 @@ class CalculatorApp
         $this->output = $this->viewBuilder->prepareLayout($page_vars);
     }
 
+    /**
+     * Display the content to the user.
+     *
+     * This function could be redefined to set custom headers in the
+     * case of the application being run as an API rather than embedded
+     * in a web page.
+     */
     protected function displayContent()
     {
         echo $this->output;
