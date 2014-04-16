@@ -2,7 +2,7 @@
 
 This is a PHP app for calculating profitability of Hirocoin, with the facility to extend it with ease to support almost any other altcoin.
 
-It has Hirocoin built in, but to convert for another altcoin it ought to be a simple enough process. To do so, simply subclass either n00bsys0p\AbeAdaptor or n00bsys0p\RpcAdaptor, and implement the abstract function getBlockValue($nHeight) for that coin. This code is simply the reward subsidy function from the coin, ported to PHP. For example, Hirocoin's is 400 >>= ($nHeight / 840000), where $nHeight is the given block height.
+It has Hirocoin built in, but to convert for another altcoin it ought to be a simple enough process. To do so, simply subclass either `\n00bsys0p\AbeAdaptor` or `\n00bsys0p\RpcAdaptor`, and implement the abstract function getBlockValue($nHeight) for that coin. This code is simply the reward subsidy function from the coin, ported to PHP. For example, Hirocoin's is 400 >>= ($nHeight / 840000), where $nHeight is the given block height.
 
 The configuration for the application are all .yml files in the /config directory. They are supplied with the .example suffix so you have to go through each of them on install of the application and fill out required details. The example files are all usable for Hirocoin.
 
@@ -34,6 +34,12 @@ To install the application, you require a web server that supports PHP version 5
 ```
 
 This will set your virtualhost to listen on all addresses on port 80, and serve the index.php file from the /public folder. Change ServerAdmin to your email address and if you're running this on a specific domain, uncomment and modify that line too.
+
+The dependencies for this project can be pulled in very easily using [composer](https://getcomposer.org/). Once you have composer installed, you need to run `./composer.phar install` in the folder into which you installed the application.
+
+## Theming
+
+Only briefly going into this.. All used templates and partials are in the /tpl folder. The format used for replacing content is to search for keys all in capitals surrounded by `{{}}`, such as `{{TITLE}}`. It's only simple, but it makes it very simple to theme to your requirements. The logo file is stored in /public/assets/img/logo.png. Simply replace this file to use your own.
 
 ## License
 
