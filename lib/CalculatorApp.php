@@ -139,7 +139,8 @@ class CalculatorApp
         $fiat_hdr = $this->viewBuilder->prepareFiatHeaders($this->config['currencies']);
         $fiat_val = $this->viewBuilder->prepareFiatValues($this->data['fiat_per_day']);
 
-        $hashrate_fmt = Calculator::formatHashRate($this->hashRate);
+        // Set the default formatted hash rate to Mh/s as it's less confusing
+        $hashrate_fmt = ($this->hashRate) ? Calculator::formatHashRate($this->hashRate) : '0 Mh/s';
 
         /**
          * Prepare the main (non-fiat-specific) page content.
