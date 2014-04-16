@@ -161,10 +161,14 @@ class CalculatorApp
         /**
          * Prepare the layout
          */
+        $analytics_id = $this->config['analytics']['ua_id'];
+        $analytics_url = $this->config['analytics']['ua_url'];
         $page_vars = array(
             'TITLE' => $this->config['app']['appname'],
             'BODY' => $body,
-            'ERRORS' => $errors
+            'ERRORS' => $errors,
+            'GA_UAID' => $analytics_id,
+            'GA_URL' => $analytics_url,
         );
 
         $this->output = $this->viewBuilder->prepareLayout($page_vars);
