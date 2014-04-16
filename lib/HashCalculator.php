@@ -89,13 +89,15 @@ class HashCalculator {
     public function getFiatRate($fiat_list)
     {
         $cache_opts = array('max-age' => CACHE_EXCHANGE_TIMEOUT);
-        $cache_filename = 'btcticker_' . strtoupper($fiat);
+        $cache_filename = 'btcticker';
         $url = $this->config['ticker']['url'];
 
         // Replace CURR with fiat name
         $response = $this->client->get($url, $cache_filename, $cache_opts);
 
-        return $this->processFiat($fiat_list, json_decode($response));
+        $values = $this->processFiat($fiat_list, json_decode($response));
+
+        return $values;
     }
 
     /**
@@ -158,12 +160,11 @@ class HashCalculator {
     public function calculateForHashRate($hashrate, $fiat = 'USD')
     {
         try {
-            $this->calculator = new Calculator(
-                $this->getDifficulty(),
-                $this->getBlockReward(),
-                $this->getBitcoinRate(),
-                $this->getFiatRate($fiat)
-            );
+            $diff = $this->getDifficulty();
+            $rewd = $this->getBlockReward();
+            $btcr = $this->getBitcoinRate();
+            $ftrt = $this->getFiatRate($fiat);
+            $this->calculator = new Calculator($diff, $rewd, $btcr, $ftrt);
         } catch(\Exception $e) {
             throw new \RuntimeException($e->getMessage());
         }
