@@ -144,7 +144,7 @@ class CalculatorApp
         /**
          * Prepare the main (non-fiat-specific) page content.
          */
-        $url = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'];
+        $url = '//' . $_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'];
         $body_vars = array(
             'URL' => $url,
             'COINCODE' => $this->config['app']['coin']['code'],
