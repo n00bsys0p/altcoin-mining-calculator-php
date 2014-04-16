@@ -2,21 +2,39 @@
 
 This is a PHP app for calculating profitability of Hirocoin, with the facility to extend it with ease to support almost any other altcoin.
 
-Very basic setup so far. It has Hirocoin built in, but to convert for another altcoin it ought to be a simple enough process, as you'd just need to create one class to define the block reward subsidy function for the coin, and change the configuration to describe the exchanges and coin specs.
+It has Hirocoin built in, but to convert for another altcoin it ought to be a simple enough process. To do so, simply subclass either n00bsys0p\AbeAdaptor or n00bsys0p\RpcAdaptor, and implement the abstract function getBlockValue($nHeight) for that coin. This code is simply the reward subsidy function from the coin, ported to PHP. For example, Hirocoin's is 400 >>= ($nHeight / 840000), where $nHeight is the given block height.
 
-It has caching built in. It will cache block heights for a preconfigured time ($config['cache']['block_timeout'] in config/app.php), so configure this to be the estimated number of seconds between blocks for your application. It will also cache exchange data (including fiat), for a period of time. This is done by configuring $config['cache']['exchange_timeout'] in the same file.
+The configuration for the application are all .yml files in the /config directory. They are supplied with the .example suffix so you have to go through each of them on install of the application and fill out required details. The example files are all usable for Hirocoin.
 
-There is an example configuration file in config/ called app.php.example, which shows a sample configuration set up for Hirocoin.
+The current edition uses an [ABE](https://github.com/bitcoin-abe/bitcoin-abe) data source, or can speak to the coin server daemon directly via JSON RPC if the server you're running the app on is a full node for your chosen cryptocurrency.
 
-The current edition uses an [ABE](https://github.com/bitcoin-abe/bitcoin-abe) based explorer, but I intend to build in a feature which grabs all this information directly from a local instance of any altcoin daemon that supports the required features. I have deliberately left it at a daily calculator, because many coins are now using 1 block difficulty retargeting.
+It has caching built in, in order to avoid either flooding the local daemon, or causing too many time-consuming outbound connections. It will cache block heights for a preconfigured time ($config['cache']['block_timeout'] in config/cache.yml), so configure this to be the estimated number of seconds between blocks for your application. It will also cache exchange data (including fiat), for a period of time. This is done by configuring $config['cache']['exchange_timeout'] in the same file.
 
-Credit for the algorithm used to calculate the coin rewards goes to Jarred Walton (https://plus.google.com/+JarredWalton).
+I have deliberately left it at a daily calculator, because many coins are now using 1 block difficulty retargeting, so trying to predict profitability for a month, or even a week can be quite misleading.
 
-## Examples
+Credit for the algorithm used to calculate the coin rewards goes to Jarred Walton (https://plus.google.com/+JarredWalton). Credit for libaries used go to their various authors.
 
-Check out hirocoin_example.php file for a very rudimentary example - just set the GET parameter "mh" to a numeric value (int or float greater than 0), and this will then work out the number of coins you will earn per day, check that against a non-weighted average across all configured exchanges, then compare to value against BTC, and even work out the fiat values using [Bitcoin Average](https://bitcoinaverage.com/)'s API. You can change the site that reports the bitcoin price by changing the values in config/app.php.
+## Installation
+
+To install the application, you require a web server that supports PHP version 5.3.x. Simply make sure that the folder is owned by the web server's user and point a virtual host's document root at the /public folder, serving index.php. If you install the application in /var/www, the virtualhost configuration file may look something like this:
+
+```
+<VirtualHost *:80>
+    ServerAdmin you@yourdomain.org
+    #ServerName yourdomain.org
+    DocumentRoot /var/www/public
+
+    <Directory /var/www/public>
+        DirectoryIndex index.php index.php
+        AllowOverride None
+        Order allow,deny
+        allow from all
+    </Directory>
+</VirtualHost>
+```
+
+This will set your virtualhost to listen on all addresses on port 80, and serve the index.php file from the /public folder. Change ServerAdmin to your email address and if you're running this on a specific domain, uncomment and modify that line too.
 
 ## License
 
-This work is released under the MIT license, except for the dependencies, which are the work of their
-original authors and released under whichever license is stated.
+This work is released under the MIT license, except for the dependencies, which are the work of their original authors and released under whichever license is stated within their source code.
