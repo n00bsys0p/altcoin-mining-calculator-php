@@ -80,55 +80,52 @@ class HashCalculator {
      * Get fiat rates for the altcoin for a single
      * or list of fiat currencies as provided
      *
+     * Use the configured BTC price ticker to retrieve the value for a
+     * single currency. Cached for the same time as exchange data.
+     *
      * @param  array $fiat_list An indexed array of currency codes
      * @return array
      */
     public function getFiatRate($fiat_list)
     {
-        $list = array();
-
-        if(is_array($fiat_list))
-        {
-            foreach($fiat_list as $fiat)
-            {
-                $currency = $this->processFiat($fiat);
-                $list[$fiat] = $currency;
-            }
-        }
-        else
-        {
-            return array($fiat_list => $this->processFiat($fiat_list));
-        }
-
-        return $list;
-    }
-
-    /**
-     * Retrieve the value of a single bitcoin in a given fiat currency
-     *
-     * Use the configured BTC price ticker to retrieve the value for a
-     * single currency. Cached for the same time as exchange data.
-     *
-     * @param  string $fiat The 3 character fiat currency code for which to find the value
-     * @return float
-     */
-    protected function processFiat($fiat)
-    {
         $cache_opts = array('max-age' => CACHE_EXCHANGE_TIMEOUT);
         $cache_filename = 'btcticker_' . strtoupper($fiat);
         $url = $this->config['ticker']['url'];
 
-        // Make sure the fiat code 3 is in the correct format for the API
-        $ticker_requires_ucase = $this->config['ticker']['uppercase'];
-        $fiat = ($ticker_requires_ucase) ? strtoupper($fiat) : strtolower($fiat);
+        // Replace CURR with fiat name
+        $response = $this->client->get($url, $cache_filename, $cache_opts);
 
-        // Replace CURR with 
-        $url = preg_replace('/\{\{CURR\\}}/', $fiat, $url);
-        $response = $this->client->get($url, $cache_filename, $cache_opts, NULL); // We want a NULL response if it fails
+        return $this->processFiat($fiat_list, json_decode($response));
+    }
 
-        $json = (is_null($response)) ? NULL : json_decode($response);
+    /**
+     * Retrieve the value of a single bitcoin in a given or range of
+     * fiat currencies.
+     *
+     * Parses $json with the configured locating string from the config
+     * file for each currency code supplied.
+     *
+     * @param  array  $fiat_list An array of currency short codes
+     * @param  object $json      A PHP native JSON object
+     * @return array
+     */
+    protected function processFiat($fiat_list, $json)
+    {
+        $json_srch = $this->config['ticker']['json_string'];
 
-        return (is_null($json)) ? 0 : $json->last;
+        $list = array();
+        foreach($fiat_list as $fiat)
+        {
+            // Make sure the fiat short code is in the correct format for the API
+            $ticker_ucase = $this->config['ticker']['uppercase'];
+            $fiat = ($ticker_ucase) ? strtoupper($fiat) : strtolower($fiat);
+
+            // Parse the data from this currency's element
+            $value = $this->processJson($json->$fiat, $json_srch);
+            $list[$fiat] = $value;
+        }
+
+        return $list;
     }
 
     /**
@@ -176,14 +173,40 @@ class HashCalculator {
         return $result;
     }
 
+    /**
+     * Return the local error bag
+     *
+     * @return array
+     */
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+
+    /**
+     * Add an error to the local error bag
+     */
     protected function addError($error)
     {
         $this->errors []= $error;
     }
 
-    public function getErrors()
+    /**
+     * Retrieve a given value from a JSON object
+     *
+     * Use the . delimited $json_srch to parse the relevant nested
+     * elements out of the supplied $json object/array
+     *
+     * @return mixed
+     */
+    protected function processJson($json, $json_srch)
     {
-        return $this->errors;
+        foreach(explode('.', $json_srch) as $element)
+        {
+            $json = is_array($json) ? $json[$element] : $json->$element;
+        }
+
+        return $json;
     }
 }
 

@@ -1,2 +1,3 @@
-url: https://api.bitcoinaverage.com/ticker/{{CURR}}
+url: https://api.bitcoinaverage.com/ticker/all
+json_string: averages.last
 uppercase: true
