@@ -153,6 +153,7 @@ class CalculatorApp
             'COINSPERDAY' => $this->data['coins_per_day'],
             'BTCPERDAY' => $this->data['btc_per_day'],
             'FIATPERDAY' => $fiat_val,
+            'DIFF' => $this->hashCalculator->getDifficulty(),
         );
 
         $body = $this->viewBuilder->prepareBody($body_vars);
