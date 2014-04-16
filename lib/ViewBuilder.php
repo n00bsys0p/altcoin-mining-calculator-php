@@ -26,6 +26,14 @@ class ViewBuilder
     }
 
     /**
+     * Prepare a single error for display.
+     */
+    public function prepareError($error)
+    {
+        return $this->generateTemplate('error', array('ERROR' => $error));
+    }
+
+    /**
      * Prepare the fiat headers partial view
      *
      * Loop through the fiat variables, generating the required HTML

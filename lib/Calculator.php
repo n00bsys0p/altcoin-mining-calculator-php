@@ -33,7 +33,8 @@ class Calculator {
     /**
      * Perform the actual calculation
      *
-     * @param integer $hashrate The raw hash/second rate on which to perform the calculations
+     * @param  integer $hashrate The raw hash/second rate on which to perform the calculations
+     * @return integer
      */
     public function calculatePerDay($hashrate)
     {
@@ -45,12 +46,8 @@ class Calculator {
         $bpd = $cpd * $this->getBitcoinRate();
         $fpd = $this->getFiatPerDay();
 
-<<<<<<< HEAD
-        return array('coins_per_day' => $cpd,
-=======
         // Format & respond
         return array('coins_per_day' => (int) $cpd,
->>>>>>> hirocoin-template
                      'btc_per_day'   => $this->formatAsSatoshi($bpd),
                      'fiat_per_day'  => $fpd);
     }
@@ -96,7 +93,7 @@ class Calculator {
     /**
      * Ported directly from the original source.
      *
-     * Cleans a number by rounding it.
+     * Cleans a floating point number by rounding it to an int
      *
      * @return integer
      */
@@ -216,7 +213,7 @@ class Calculator {
     /**
      * Return the local difficulty attribute
      *
-     * return float
+     * @return float
      */
     protected function getDifficulty()
     {

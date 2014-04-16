@@ -2,8 +2,9 @@
 
 namespace n00bsys0p;
 
-require_once('interfaces/ExplorerInterface.php');
-require_once('CachingHttpClient.php');
+require_once(APP_DIR . '/lib/adaptors/interfaces/AdaptorInterface.php');
+require_once(APP_DIR . '/lib/adaptors/exceptions/AbeException.php');
+require_once(APP_DIR . '/lib/CachingHttpClient.php');
 
 /**
  * Abe Explorer API class
@@ -15,7 +16,7 @@ require_once('CachingHttpClient.php');
  * @version 0.1
  * @author Alex Shepherd (n00bsys0p) <n00b@n00bsys0p.co.uk>
  */
-abstract class AbeExplorer implements ExplorerInterface
+abstract class AbeAdaptor implements AdaptorInterface
 {
     protected $url = NULL;
     protected $chain = NULL;
@@ -29,6 +30,8 @@ abstract class AbeExplorer implements ExplorerInterface
      */
     public function __construct($config)
     {
+        $this->sanityCheck($config);
+
         $this->url = $config['url'];
         $this->chain = $config['chain'];
         $this->client = new CachingHttpClient;
@@ -42,11 +45,16 @@ abstract class AbeExplorer implements ExplorerInterface
      *
      * Retrieve the current network difficult from the configured
      * Abe-based explorer.
+     *
+     * @return float
      */
     public function getDifficulty()
     {
         $url = $this->_constructUrl('getdifficulty');
         $diff = $this->client->get($url, 'diff.dat', array('max-age' => CACHE_BLOCK_TIMEOUT));
+
+        if($diff == 0)
+            throw new AbeException('Detected diff at 0. Please try again later.');
 
         return $diff;
     }
@@ -58,7 +66,7 @@ abstract class AbeExplorer implements ExplorerInterface
      * implement the abstract function getBlockValue($nHeight) for
      * any new coin you add to this app.
      *
-     * @param integer $nHeight The block height for which to find the reward
+     * @param  integer $nHeight The block height for which to find the reward
      */
     public function setBlockReward($nHeight)
     {
@@ -67,9 +75,14 @@ abstract class AbeExplorer implements ExplorerInterface
 
     /**
      * Return the current block reward
+     *
+     * @return integer
      */
     public function getBlockReward()
     {
+        if($this->block_reward <= 0)
+            throw new AbeException('Block reward detected <= 0, please try again later.');
+
         return $this->block_reward;
     }
 
@@ -88,18 +101,39 @@ abstract class AbeExplorer implements ExplorerInterface
      *
      * Cached for the selected coin's estimated block time as configured
      * in config/cache.yml
+     *
+     * @return integer
      */
     public function getBlockHeight()
     {
-        $url = $this->_constructUrl('getblockheight');
+        $url = $this->_constructUrl('getblockcount');
         $height = $this->client->get($url, 'height.dat', array('max-age' => CACHE_BLOCK_TIMEOUT));
+
+        if($height < 1)
+            throw new AbeException('Current block height detected < 1. Please try again later.');
 
         return $height;
     }
 
     /**
-     * Construct an Abe API URL by passing a feature. This may contain
-     * multiple URI segments, separated by a /
+     * Perform a sanity check on a config array
+     *
+     * Throws an exception if anything's not right
+     */
+    protected function sanityCheck($config)
+    {
+        if(!isset($config['url']) || !isset($config['chain']))
+            throw new \Exception('You must set the url and chain options in the adaptor configuration file.');
+    }
+
+    /**
+     * Make an Abe API URL from a "feature"
+     *
+     * Construct an Abe API URL by passing a feature. The feature may
+     * contain multiple URI segments, separated by a /.
+     *
+     * @param  string $feature The Abe API feature to acess, including any relevant parameters
+     * @return string
      */
     protected function _constructUrl($feature)
     {

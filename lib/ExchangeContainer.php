@@ -44,10 +44,15 @@ class ExchangeContainer
 
         foreach($this->exchanges as $exchange)
         {
-            $rate = $exchange->getBtcRate();
+            try {
+                $rate = $exchange->getBtcRate();
+            } catch(\Exception $e) {
+                $failed++;
+                continue;
+            }
 
             if($rate > 0)
-                $total += $exchange->getBtcRate();
+                $total += $rate;
             else
                 $failed++;
         }

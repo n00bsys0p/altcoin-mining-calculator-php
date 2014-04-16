@@ -19,6 +19,7 @@ class CalculatorApp
     protected $hashCalculator = NULL;
     protected $data           = array();
     protected $output         = NULL;
+    protected $errors         = array();
 
     /**
      * Constructor
@@ -35,13 +36,23 @@ class CalculatorApp
 
         /**
          * We use dependency injection to inject the correct
-         * explorer because we have to customise the block
+         * adaptor because we have to customise the block
          * reward subsidy for most different alt coins. You
          * can also choose to inject your own calculator.
+         *
+         * The adaptor can also optionally be an RPC based
+         * adaptor, for quicker response times in a machine
+         * that's already running a full node.
          */
         $hashCalculator = $this->config['calculator']['classname'];
-        $explorer = $this->config['explorer']['classname'];
-        $this->hashCalculator = new $hashCalculator($this->config, $explorer);
+        $adaptor = $this->config['adaptor']['classname'];
+
+        try {
+            $this->hashCalculator = new $hashCalculator($this->config, $adaptor);
+        } catch(\Exception $e) {
+            // Probably a config error so just fall over
+            die($e->getMessage());
+        }
     }
 
     /**
@@ -53,8 +64,14 @@ class CalculatorApp
     public function run()
     {
         // These must be run in this order
-        $this->init();
-        $this->requestData();
+        try {
+            $this->init();
+            $this->requestData();
+        } catch(\Exception $e) {
+            $this->errors = $this->hashCalculator->getErrors();
+            $this->errors []= $e->getMessage();
+        }
+
         $this->prepareView();
         $this->displayContent();
     }
@@ -104,6 +121,18 @@ class CalculatorApp
     protected function prepareView()
     {
         /**
+         * Process any errors that have occurred
+         */
+        $errors = '';
+        if(!empty($this->errors))
+        {
+            foreach($this->errors as $err)
+            {
+                $errors .= $this->viewBuilder->prepareError($err);
+            }
+        }
+
+        /**
          * Loop through the fiat variables, generating the required HTML
          * to insert into the table - both for headings and values
          */
@@ -115,7 +144,10 @@ class CalculatorApp
         /**
          * Prepare the main (non-fiat-specific) page content.
          */
+        $url = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'];
         $body_vars = array(
+            'URL' => $url,
+            'COINCODE' => $this->config['app']['coin']['code'],
             'HASHRATE' => explode(' ', $hashrate_fmt)[0],
             'HASHSUFFIX' => explode(' ',$hashrate_fmt)[1],
             'COINSPERDAY' => $this->data['coins_per_day'],
@@ -129,8 +161,9 @@ class CalculatorApp
          * Prepare the layout
          */
         $page_vars = array(
-            'TITLE' => 'Hirocoin Mining Calculator',
+            'TITLE' => $this->config['app']['appname'],
             'BODY' => $body,
+            'ERRORS' => $errors
         );
 
         $this->output = $this->viewBuilder->prepareLayout($page_vars);
@@ -146,5 +179,10 @@ class CalculatorApp
     protected function displayContent()
     {
         echo $this->output;
+    }
+
+    protected function addError($error)
+    {
+        $this->errors []= $error;
     }
 }

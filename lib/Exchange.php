@@ -97,9 +97,7 @@ class Exchange
                 $result = (is_array($result)) ? $result[$key] : $result->$key;
         }
         else
-        {
-            $result = 0;
-        }
+            throw new JsonException('Unable to decode JSON from response: ' . $json_string);
 
         return $result;
     }

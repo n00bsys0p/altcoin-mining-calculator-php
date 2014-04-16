@@ -2,10 +2,10 @@
 
 namespace n00bsys0p;
 
-require_once('lib/AbeExplorer.php');
+require_once(APP_DIR . '/lib/adaptors/AbeAdaptor.php');
 
 /**
- * Sample Abe Explorer extension for Hirocoin
+ * Sample AbeAdaptor extension for Hirocoin
  *
  * All currencies which will use an Abe explorer as a data
  * source require a new class to be implemented, which extends
@@ -19,7 +19,7 @@ require_once('lib/AbeExplorer.php');
  * class extension to use a customised method for detecting the
  * network block difficulty by using a P2Pool node.
  */
-class HirocoinExplorer extends AbeExplorer
+class HirocoinAbeAdaptor extends AbeAdaptor
 {
     /**
      * Ported directly from Hirocoin source code, ignoring txfees

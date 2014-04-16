@@ -18,15 +18,21 @@ class HashCalculator {
     // App configuration
     protected $config = NULL;
 
-    // Explorer object to deal with Explorer queries
-    protected $explorer = NULL;
+    // Adaptor object to handle crypto network queries
+    protected $adaptor = NULL;
 
     // ExchangeContainer for performing operations
     // on grouped Exchange objects
     protected $exchanges = NULL;
 
+    // An HTTP client
     protected $client = NULL;
+
+    // The actual calculator
     protected $calculator = NULL;
+
+    // Basic message bag for errors
+    protected $errors = array();
 
     /**
      * Constructor
@@ -34,12 +40,12 @@ class HashCalculator {
      * Configures the controller object
      *
      * @param array  $config   The application configuration
-     * @param string $explorer The class name of the explorer to use
+     * @param string $adaptor The class name of the adaptor to use
      */
-    public function __construct($config, $explorer)
+    public function __construct($config, $adaptor)
     {
         $this->config    = $config;
-        $this->explorer  = new $explorer($config['explorer']);
+        $this->adaptor  = new $adaptor($config['adaptor']);
         $this->exchanges = new ExchangeContainer($config['exchanges']);
         $this->client    = new CachingHttpClient;
     }
@@ -47,25 +53,25 @@ class HashCalculator {
     /**
      * Get current block reward
      *
-     * Query the explorer for the current block reward
+     * Query the adaptor for the current block reward
      *
      * @return integer
      */
     public function getBlockReward()
     {
-        return $this->explorer->getBlockReward();
+        return $this->adaptor->getBlockReward();
     }
 
     /**
      * Get current block difficulty
      *
-     * Query the configured explorer for the current block difficulty
+     * Query the configured adaptor for the current block difficulty
      *
      * @return float
      */
     public function getDifficulty()
     {
-        return $this->explorer->getDifficulty();
+        return $this->adaptor->getDifficulty();
     }
 
     /**
@@ -154,15 +160,30 @@ class HashCalculator {
      */
     public function calculateForHashRate($hashrate, $fiat = 'USD')
     {
-        $diff     = $this->getDifficulty();
-        $reward   = $this->getBlockReward();
-        $btcrate  = $this->getBitcoinRate();
-        $btcprice = $this->getFiatRate($fiat);
+        try {
+            $this->calculator = new Calculator(
+                $this->getDifficulty(),
+                $this->getBlockReward(),
+                $this->getBitcoinRate(),
+                $this->getFiatRate($fiat)
+            );
+        } catch(\Exception $e) {
+            throw new \RuntimeException($e->getMessage());
+        }
 
-        $this->calculator = new Calculator($diff, $reward, $btcrate, $btcprice);
         $result = $this->calculator->calculatePerDay($hashrate);
 
         return $result;
+    }
+
+    protected function addError($error)
+    {
+        $this->errors []= $error;
+    }
+
+    public function getErrors()
+    {
+        return $this->errors;
     }
 }
 

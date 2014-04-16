@@ -1,0 +1,4 @@
+appname: Hirocoin Mining Calculator
+coin:
+    name: Hirocoin
+    code: HIRO

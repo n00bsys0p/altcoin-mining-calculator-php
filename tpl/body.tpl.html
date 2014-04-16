@@ -1,39 +1,48 @@
-<div class="row">
-    <form method="get" id="hashrate-form" action="http://localhost/calc/">
-        <label for="hr" id="hashrate-label">Hash Rate</label>
-        <input name="hr" type="text" placeholder="2.0" value="{{HASHRATE}}"/>
-        <select name="hx">
-            <option value="1">h/s</option> 
-            <option value="1000">Kh/s</option> 
-            <option value="1000000">Mh/s</option> 
-            <option value="1000000000">Gh/s</option> 
-            <option value="10000000000">Th/s</option> 
-            <option value="10000000000000">Ph/s</option> 
-        </select>
-        <input type="submit" id="calchash" class="btn btn-primary" value="Calculate" />
-    </form>
-</div>
-<div class="row">
-    <table id="calculator" class="table center">
-        <caption>Hash Power For {{HASHRATE}}{{HASHSUFFIX}}</caption>
-        <thead>
-            <tr>
-                <th>HIRO/day</th>
-                <th>BTC/day</th>
-                <th>
-                    <span class="curr-USD">$</span>
-                    <span class="curr-GBP">£</span>
-                    <span class="curr-CNY">¥</span>
-                    <span class="curr-EUR">€</span>/day
-                    <img id="switch" class="pulse circle" src="/calc/tpl/assets/img/switch.png" width="25"/>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>{{COINSPERDAY}}</td><td>{{BTCPERDAY}}</td><td>{{FIATPERDAY}}</td>
-            </tr>
-        </tbody>
-        <tfoot></tfoot>
-    </table>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="row">
+            <form method="get" id="hashrate-form" action="{{URL}}" class="text-center">
+                <label for="hr" id="hashrate-label">Hash Rate</label>
+                <input name="hr" type="text" placeholder="2.0" value="{{HASHRATE}}" style="width: 100px;"/>
+                <select name="hx">
+                    <option value="1">h/s</option> 
+                    <option value="1000">Kh/s</option> 
+                    <option value="1000000">Mh/s</option> 
+                    <option value="1000000000">Gh/s</option> 
+                    <option value="10000000000">Th/s</option> 
+                    <option value="10000000000000">Ph/s</option> 
+                </select>
+                <input type="submit" id="calchash" class="btn btn-success" value="Calculate" />
+            </form>
+        </div>
+        <div class="row">
+            <hr />
+        </div>
+        <div class="row">
+            <table id="calculator" class="table center text-center">
+                <caption>Hash Power For {{HASHRATE}}{{HASHSUFFIX}}</caption>
+                <thead>
+                    <tr>
+                        <th class="text-center">{{COINCODE}}/day</th>
+                        <th class="text-center">BTC/day</th>
+                        <th class="text-center">
+                            <span class="curr-USD">$</span>
+                            <span class="curr-GBP">£</span>
+                            <span class="curr-CNY">¥</span>
+                            <span class="curr-EUR">€</span>/day
+                            <img id="switch" class="pulse circle" src="/assets/img/switch.png" width="25"/>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{COINSPERDAY}}</td>
+                        <td>{{BTCPERDAY}}</td>
+                        <td>{{FIATPERDAY}}</td>
+                    </tr>
+                </tbody>
+                <tfoot></tfoot>
+            </table>
+        </div>
+    </div>
 </div>

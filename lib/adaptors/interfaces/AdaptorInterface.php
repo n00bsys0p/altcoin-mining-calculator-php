@@ -11,12 +11,16 @@ namespace n00bsys0p;
  * the current network block difficulty it doesn't matter
  * what it is.
  */
-interface ExplorerInterface
+interface AdaptorInterface
 {
     /**
      * Return the block value for any given block height
      */
     public function getBlockValue($nHeight);
+    /**
+     * Return the CURRENT block reward
+     */
+    public function getBlockReward();
     /**
      * Return the current max block height
      */

@@ -1,0 +1,29 @@
+body {
+  padding: 2em;
+}
+
+#logo {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table#calculator th,
+table#calculator td {
+  width: 33%;
+}
+
+table#calculator thead {
+    height: 25px;
+}
+
+.circle {
+  display: block;
+  width: 25px;
+  height: 25px;
+  -webkit-border-radius: 99em;
+  -moz-border-radius: 99em;
+  border-radius: 99em;
+  border: 3px solid #eee;
+  box-shadow: 0 3px 2px rgba(0, 0, 0, 0.3);  
+}

@@ -12,24 +12,27 @@
 
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-        <link rel="stylesheet" href="/calc/tpl/assets/css/normalize.css">
-        <link rel="stylesheet" href="/calc/tpl/assets/css/main.css">
+        <link rel="stylesheet" href="/assets/css/normalize.css">
+        <link rel="stylesheet" href="/assets/css/main.css">
         <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-        <link rel="stylesheet" href="/calc/tpl/assets/css/hover-min.css">
-        <script src="/calc/tpl/assets/js/vendor/modernizr-2.6.2.min.js"></script>
+        <link rel="stylesheet" href="/assets/css/hover-min.css">
+        <script src="/assets/js/vendor/modernizr-2.6.2.min.js"></script>
     </head>
     <body onload="hideOtherCurrencies();">
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
         <div class="container">
+            <img id="logo" src="/assets/img/logo.png" width="100px" />
+            <h2 class="title text-center"><strong>{{TITLE}}</strong></h1>
+            {{ERRORS}}
             {{BODY}}
         </div>
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="/calc/tpl/assets/js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
+        <script>window.jQuery || document.write('<script src="/assets/js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
         <script type="text/javascript" src="http://jqueryrotate.googlecode.com/svn/trunk/jQueryRotate.js"></script>
         <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-        <script src="/calc/tpl/assets/js/main.js"></script>
+        <script src="/assets/js/main.js"></script>
     </body>
 </html>

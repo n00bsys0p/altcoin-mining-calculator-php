@@ -3,6 +3,7 @@
 namespace n00bsys0p;
 
 require_once('Cache.php');
+require_once('exceptions/CacheException.php');
 
 /**
  * Caching HTTP Client
@@ -36,11 +37,10 @@ class CachingHttpClient
      * @param string $url            The URL to get or cache
      * @param string $cache_filename The name of the cache file to save to
      * @param array  $cache_opts     An optional array of options to pass to the cache
-     * @param mixed  $default_result The response if the retrieval of data fails. Can be anything.
      */
-    public function get($url, $cache_filename, $cache_opts = array(), $default_result = 0)
+    public function get($url, $cache_filename, $cache_opts = array())
     {
-        return $this->_getOrCache($url, $cache_filename, $cache_opts, $default_result);
+        return $this->_getOrCache($url, $cache_filename, $cache_opts);
     }
 
     /**
@@ -54,9 +54,8 @@ class CachingHttpClient
      * @param string $url            The URL to get or cache
      * @param string $cache_filename The name of the cache file to save to
      * @param array  $cache_opts     An optional array of options to pass to the cache
-     * @param mixed  $default_result The response if the retrieval of data fails. Can be anything.
      */
-    protected function _getOrCache($url, $cache_filename, $cache_opts, $default_result)
+    protected function _getOrCache($url, $cache_filename, $cache_opts)
     {
         try {
             $result = $this->cache->getOrCreate($cache_filename, $cache_opts, function($filename) use($url) {
@@ -64,7 +63,7 @@ class CachingHttpClient
                 return $response;
             });
         } catch(\Exception $e) {
-            return $default_result;
+            throw new CacheException($e->getMessage());
         }
 
         return $result;

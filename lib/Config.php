@@ -29,7 +29,7 @@ class Config
         foreach($config_files as $file)
         {
             // Key is filename without folder and with extension trimmed
-            $key = preg_replace('/^.*\//', '', explode('.', $file)[0]);
+            $key = explode('.', end(explode('/', $file)))[0];
             $config[$key]= Yaml::parse($file);
         }
 

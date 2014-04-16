@@ -1,9 +1,9 @@
 Poloniex:
-    base_url: https://poloniex.com'
+    base_url: https://poloniex.com
     uri: public
     get_params:
         command: returnTicker
-    json_key: BTC_HIC
+    json_key: BTC_HIRO.last
 Mintpal:
     base_url: https://api.mintpal.com/market/stats
     uri: HIRO/BTC
