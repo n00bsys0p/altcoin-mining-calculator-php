@@ -8,4 +8,8 @@ require_once(APP_DIR . '/lib/adaptors/coins/HirocoinRpcAdaptor.php');
 
 $app = new \n00bsys0p\CalculatorApp($config);
 
-$app->run();
+try {
+    $app->run();
+} catch(\Exception $e) {
+    die($e->getMessage());
+}
