@@ -64,24 +64,29 @@ class Calculator {
      */
     public static function formatHashRate($hashrate)
     {
-        if($hashrate >= 1000000000000)
+        if($hashrate >= pow(10, 15))
         {
-            $hashrate /= 1000000000000;
+            $hashrate /= pow(10, 15);
             $suffix = 'P';
         }
-        elseif($hashrate >= 1000000000)
+        elseif($hashrate >= pow(10, 12))
         {
-            $hashrate /= 1000000000;
+            $hashrate /= pow(10, 12);
             $suffix = 'T';
         }
-        elseif($hashrate >= 1000000)
+        elseif($hashrate >= pow(10, 9))
         {
-            $hashrate /= 1000000;
+            $hashrate /= pow(10, 9);
+            $suffix = 'G';
+        }
+        elseif($hashrate >= pow(10, 6))
+        {
+            $hashrate /= pow(10, 6);
             $suffix = 'M';
         }
-        elseif($hashrate >= 1000)
+        elseif($hashrate >= pow(10, 3))
         {
-            $hashrate /= 1000;
+            $hashrate /= pow(10, 3);
             $suffix = 'K';
         }
         elseif($hashrate >= 0)
