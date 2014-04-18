@@ -25,7 +25,7 @@ class CachingHttpClient
     public function __construct()
     {
         $this->cache = Cache::init();
-        $this->client = new \GuzzleHttp\Client;
+        $this->client = new \GuzzleHttp\Client(array('defaults' => array('timeout' => 10)));
     }
 
     /**
@@ -40,7 +40,7 @@ class CachingHttpClient
      */
     public function get($url, $cache_filename, $cache_opts = array())
     {
-        return $this->_getOrCache($url, $cache_filename, $cache_opts);
+        return $this->getOrCache($url, $cache_filename, $cache_opts);
     }
 
     /**
@@ -55,7 +55,7 @@ class CachingHttpClient
      * @param string $cache_filename The name of the cache file to save to
      * @param array  $cache_opts     An optional array of options to pass to the cache
      */
-    protected function _getOrCache($url, $cache_filename, $cache_opts)
+    protected function getOrCache($url, $cache_filename, $cache_opts)
     {
         try {
             $result = $this->cache->getOrCreate($cache_filename, $cache_opts, function($filename) use($url) {

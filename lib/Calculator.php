@@ -13,7 +13,6 @@ namespace n00bsys0p;
 class Calculator {
 
     protected $attributes = array();
-
     protected $coinsPerDay = 0;
 
     /**
@@ -52,6 +51,18 @@ class Calculator {
                      'fiat_per_day'  => $fpd);
     }
 
+    protected static function supportedHashRates()
+    {
+        // These must be in reverse order
+        return array(
+            'P' => pow(10, 15),
+            'T' => pow(10, 12),
+            'G' => pow(10, 9),
+            'M' => pow(10, 6),
+            'K' => pow(10, 3),
+        );
+    }
+
     /**
      * Format a raw hash/second rate
      *
@@ -64,33 +75,16 @@ class Calculator {
      */
     public static function formatHashRate($hashrate)
     {
-        if($hashrate >= pow(10, 15))
+        $suffix = '';
+
+        foreach(static::supportedHashrates() as $char => $rate)
         {
-            $hashrate /= pow(10, 15);
-            $suffix = 'P';
+            if($hashrate >= $rate)
+            {
+                $hashrate /= $rate;
+                $suffix = $char;
+            }
         }
-        elseif($hashrate >= pow(10, 12))
-        {
-            $hashrate /= pow(10, 12);
-            $suffix = 'T';
-        }
-        elseif($hashrate >= pow(10, 9))
-        {
-            $hashrate /= pow(10, 9);
-            $suffix = 'G';
-        }
-        elseif($hashrate >= pow(10, 6))
-        {
-            $hashrate /= pow(10, 6);
-            $suffix = 'M';
-        }
-        elseif($hashrate >= pow(10, 3))
-        {
-            $hashrate /= pow(10, 3);
-            $suffix = 'K';
-        }
-        elseif($hashrate >= 0)
-            $suffix = '';
 
         return $hashrate . ' ' . $suffix . 'h/s';
     }
@@ -199,7 +193,7 @@ class Calculator {
         foreach($this->getBitcoinPrice() as $fiat => $value)
         {
             $fpd = $value * $this->getBitcoinRate() * $this->getCoinsPerDay();
-            $currencies[$fiat] = round($fpd, 2);
+            $currencies[$fiat] = sprintf('%.02f', round($fpd, 2));
         }
 
         $this->setAttribute('fiat_per_day', $currencies);

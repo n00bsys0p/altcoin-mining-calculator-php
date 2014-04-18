@@ -14,12 +14,14 @@ require_once('ViewBuilder.php');
  */
 class CalculatorApp
 {
-    protected $config         = NULL;
-    protected $hashRate       = NULL;
-    protected $hashCalculator = NULL;
-    protected $data           = array();
-    protected $output         = NULL;
-    protected $errors         = array();
+    protected     $config           = NULL;
+    protected     $hashRate         = NULL;
+    protected     $hashCalculator   = NULL;
+    protected     $data             = array();
+    protected     $output           = NULL;
+    protected     $errors           = array();
+    protected     $displayFormat    = 'html';
+    public static $supportedFormats = array('html', 'json');
 
     /**
      * Constructor
@@ -32,7 +34,15 @@ class CalculatorApp
     public function __construct($config)
     {
         $this->config = $config;
-        $this->viewBuilder = new ViewBuilder;
+
+        $format = isset($_GET['fmt']) ? $_GET['fmt'] : NULL;
+        if(!is_null($format))
+            if(in_array($format, static::$supportedFormats))
+                $this->displayFormat = $format;
+
+        // Only instantiate the view builder if it's not an API request
+        if($this->displayFormat == 'html')
+           $this->viewBuilder = new ViewBuilder();
 
         /**
          * We use dependency injection to inject the correct
@@ -47,12 +57,7 @@ class CalculatorApp
         $hashCalculator = $this->config['calculator']['classname'];
         $adaptor = $this->config['adaptor']['classname'];
 
-        try {
-            $this->hashCalculator = new $hashCalculator($this->config, $adaptor);
-        } catch(\Exception $e) {
-            // Probably a config error so just fall over
-            die($e->getMessage());
-        }
+        $this->hashCalculator = new $hashCalculator($this->config, $adaptor);
     }
 
     /**
@@ -72,7 +77,20 @@ class CalculatorApp
             $this->errors []= $e->getMessage();
         }
 
-        $this->prepareView();
+        /**
+         * TODO: Tidy this up to shell out to a new class as
+         * this is still a little messy.
+         */
+        switch($this->displayFormat)
+        {
+        case 'html':
+            $this->prepareView();
+            break;
+        case 'json':
+            $this->prepareJson();
+            break;
+        }
+
         $this->displayContent();
     }
 
@@ -120,13 +138,16 @@ class CalculatorApp
      */
     protected function prepareView()
     {
+        $data = $this->prepareData();
+        $appname = $this->config['appname'];
+
         /**
          * Process any errors that have occurred
          */
         $errors = '';
-        if(!empty($this->errors))
+        if(!empty($data['errors']))
         {
-            foreach($this->errors as $err)
+            foreach($data['errors'] as $err)
             {
                 $errors .= $this->viewBuilder->prepareError($err);
             }
@@ -139,22 +160,19 @@ class CalculatorApp
         $fiat_hdr = $this->viewBuilder->prepareFiatHeaders($this->config['currencies']);
         $fiat_val = $this->viewBuilder->prepareFiatValues($this->data['fiat_per_day']);
 
-        // Set the default formatted hash rate to Mh/s as it's less confusing
-        $hashrate_fmt = ($this->hashRate) ? Calculator::formatHashRate($this->hashRate) : '0 Mh/s';
-
         /**
          * Prepare the main (non-fiat-specific) page content.
          */
         $url = '//' . $_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'];
         $body_vars = array(
             'URL' => $url,
-            'COINCODE' => $this->config['app']['coin']['code'],
-            'HASHRATE' => explode(' ', $hashrate_fmt)[0],
-            'HASHSUFFIX' => explode(' ',$hashrate_fmt)[1],
+            'COINCODE' => $data['coin']['code'],
+            'HASHRATE' => explode(' ', $data['hashrate'])[0],
+            'HASHSUFFIX' => explode(' ',$data['hashrate'])[1],
             'COINSPERDAY' => $this->data['coins_per_day'],
             'BTCPERDAY' => $this->data['btc_per_day'],
             'FIATPERDAY' => $fiat_val,
-            'DIFF' => $this->hashCalculator->getDifficulty(),
+            'DIFF' => $data['difficulty'],
         );
 
         $body = $this->viewBuilder->prepareBody($body_vars);
@@ -164,8 +182,10 @@ class CalculatorApp
          */
         $analytics_id = $this->config['analytics']['ua_id'];
         $analytics_url = $this->config['analytics']['ua_url'];
+        $coin = $data['coin']['name'];
+        $title = preg_replace('/\%NAME/', $coin, $appname);
         $page_vars = array(
-            'TITLE' => $this->config['app']['appname'],
+            'TITLE' => $title,
             'BODY' => $body,
             'ERRORS' => $errors,
             'GA_UAID' => $analytics_id,
@@ -173,6 +193,51 @@ class CalculatorApp
         );
 
         $this->output = $this->viewBuilder->prepareLayout($page_vars);
+    }
+
+    /**
+     * Return a nicely formatted array of all required data.
+     *
+     * This currently processes the data to be used in the JSON
+     * response. 
+     *
+     * @return array
+     */
+    protected function prepareData()
+    {
+        $response = array();
+        if(!empty($this->errors))
+        {
+            $response['errors'] = $this->errors;
+
+            return $response;
+        }
+
+        $response['coin'] = $this->config['app']['coin'];
+        $response['hashrate'] = ($this->hashRate) ?
+            Calculator::formatHashRate($this->hashRate) :
+            '0 Mh/s';
+        $response['difficulty'] = $this->hashCalculator->getDifficulty();
+        $respomse['daily_return'] = array();
+        $response['daily_return']['coins'] = $this->data['coins_per_day'];
+        $response['daily_return']['btc'] = $this->data['btc_per_day'];
+        $response['daily_return']['fiat'] = array();
+
+        foreach($this->config['currencies'] as $code => $symbol)
+        {
+            $response['daily_return']['fiat'][$code] = array(
+                'symbol' => $symbol,
+                'value' => $this->data['fiat_per_day'],
+            );
+        }
+
+        return $response;
+    }
+
+    protected function prepareJson()
+    {
+        header('Content-type: application/json');
+        $this->output = json_encode($this->prepareData());
     }
 
     /**
