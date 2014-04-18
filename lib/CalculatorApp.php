@@ -227,7 +227,7 @@ class CalculatorApp
         {
             $response['daily_return']['fiat'][$code] = array(
                 'symbol' => $symbol,
-                'value' => $this->data['fiat_per_day'],
+                'value' => $this->data['fiat_per_day'][$code],
             );
         }
 
