@@ -45,3 +45,9 @@ Limecoin:
         base_url: http://api.swaphole.com/market
         uri: LIM/BTC
         json_key: ticks.0.close
+    Bittrex:
+        base_url: https://bittrex.com/api/v1/public
+        uri: getticker
+        get_params:
+            market: BTC-LIM
+        json_key: result.Bid
