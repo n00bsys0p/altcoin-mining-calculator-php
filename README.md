@@ -125,7 +125,7 @@ The coin's logo for the visual web interface should be in PNG format, and locate
 
 ## Theming
 
-Only briefly going into this.. All used templates and partials are in the /tpl folder. The format used for replacing content is to search for keys all in capitals surrounded by `{{}}`, such as `{{TITLE}}`. It's only simple, but it makes it relatively simple to theme to your requirements. The logo file is stored in /public/assets/img/logo.png. Simply replace this file to use your own.
+Only briefly going into this.. All used templates and partials are in the /tpl folder. The format used for replacing content is to search for keys all in capitals surrounded by `{{}}`, such as `{{TITLE}}`. It's only simple, but it makes it relatively simple to theme to your requirements.
 
 ## License
 
