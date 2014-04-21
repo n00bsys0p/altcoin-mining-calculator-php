@@ -4,6 +4,12 @@ namespace n00bsys0p;
 
 require_once(APP_DIR . '/subsidy_functions/interfaces/SubsidyFunctionInterface.php');
 
+/**
+ * Darkcoin subsidy function
+ *
+ * This provides the value of a block based on the height and
+ * difficulty of the previous block.
+ */
 class DarkcoinSubsidyFunction implements SubsidyFunctionInterface
 {
     /**
@@ -16,25 +22,12 @@ class DarkcoinSubsidyFunction implements SubsidyFunctionInterface
      * Written 21-Apr-2014, not guaranteed to work if there's a hard fork
      * relating to the subsidy after this date.
      *
-     * @param integer $nHeight The block height for which to find the subsidy
-     * @param integer $nBits   The block's bits attribute (difficulty) as an integer
+     * @param  integer $nHeight The block height for which to find the subsidy
+     * @param  integer $dDiff   The given block's difficulty
+     * @return float
      */
-    public function getBlockValue($nHeight, $nBits)
+    public function getBlockValue($nHeight, $dDiff)
     {
-        $dDiff = (double) hexdec('0x0000ffff') / (double) ($nBits & hexdec('0x00ffffff'));
-
-        $nShift = ($nBits >> 24) & hexdec('0xff');
-        while($nShift < 29)
-        {
-            $dDiff *= 256.0;
-            $nShift++;
-        }
-        while($nShift > 29)
-        {
-            $dDiff /= 256.0;
-            $nShift--;
-        }
-
         $nSubsidy = 0;
 
         // 2222222/(((x+2600)/9)^2)

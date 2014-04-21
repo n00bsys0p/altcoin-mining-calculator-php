@@ -94,7 +94,8 @@ class AbeAdaptor extends BaseAdaptor
      */
     public function getBlockValue($nHeight)
     {
-        return $this->subsidyFunction->getBlockValue($nHeight);
+        $dDiff = $this->getDifficulty();
+        return $this->subsidyFunction->getBlockValue($nHeight, $dDiff);
     }
 
     /**

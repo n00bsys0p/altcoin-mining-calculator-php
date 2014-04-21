@@ -57,11 +57,9 @@ class RpcAdaptor extends BaseAdaptor
     public function getBlockReward()
     {
         $nHeight = $this->getBlockHeight();
+        $dDiff = $this->getDifficulty();
 
-        $blockHash = $this->getBlockHash($nHeight);
-        $nBits = hexdec($this->getBlockBits($blockHash));
-
-        return $this->subsidyFunction->getBlockValue($nHeight, $nBits);
+        return $this->subsidyFunction->getBlockValue($nHeight, $diff);
     }
 
     /**
@@ -82,8 +80,18 @@ class RpcAdaptor extends BaseAdaptor
      */
     public function getDifficulty()
     {
-        $diff = $this->call('getdifficulty');
+        /**
+         * More complex method but more accurate number for
+         * difficulty than reported by getdifficulty
+         */
+        $nHeight = $this->getBlockHeight();
+          
+        $blockHash = $this->getBlockHash($nHeight);
+        $nBits = $this->getBlockBits($blockHash);
+        $diff = $this->convertBlockBitsToDiff($nBits);
+
         return $diff;
+        //return $this->call('getdifficulty');
     }
 
     public function getBlockHash($nHeight)
