@@ -1,3 +1,4 @@
 dir: cache
 exchange_timeout: 900
 block_timeout: 60
+fiat_timeout: 900
