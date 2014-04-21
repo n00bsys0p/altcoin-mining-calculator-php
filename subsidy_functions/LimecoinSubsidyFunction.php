@@ -5,7 +5,7 @@ namespace n00bsys0p;
 require_once(APP_DIR . '/subsidy_functions/interfaces/SubsidyFunctionInterface.php');
 
 /**
- * Implementation of Hirocoin's subsidy function
+ * Implementation of Limecoin's subsidy function
  */
 class LimecoinSubsidyFunction implements SubsidyFunctionInterface
 {
