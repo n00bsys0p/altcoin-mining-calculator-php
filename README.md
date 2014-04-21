@@ -47,6 +47,8 @@ Credit for the algorithm used to calculate the coin rewards goes to Jarred Walto
 
 ## Installation
 
+The dependencies for this project can be pulled in very easily using [composer](https://getcomposer.org/). Once you have composer installed, you need to run `./composer.phar install` in the folder into which you installed the application.
+
 To install the application, you require a web server that supports PHP version 5.3.x. Simply make sure that the folder is owned by the web server's user and point a virtual host's document root at the /public folder, serving index.php. If you install the application in /var/www, the virtualhost configuration file may look something like this:
 
 ```
@@ -66,7 +68,43 @@ To install the application, you require a web server that supports PHP version 5
 
 This will set your virtualhost to listen on all addresses on port 80, and serve the index.php file from the /public folder. Change ServerAdmin to your email address and if you're running this on a specific domain, uncomment and modify that line too.
 
-The dependencies for this project can be pulled in very easily using [composer](https://getcomposer.org/). Once you have composer installed, you need to run `./composer.phar install` in the folder into which you installed the application.
+An Apache implementation on a multipool may look as follows:
+```
+<VirtualHost 127.0.0.1:8001>
+    DocumentRoot /var/www/scrypt/public
+
+    <Directory /var/www/scrypt/public>
+        DirectoryIndex index.php index.php
+        AllowOverride None
+        Order allow,deny
+        allow from all
+    </Directory>
+</VirtualHost>
+
+<VirtualHost 127.0.0.1:8002>
+    DocumentRoot /var/www/x11/public
+
+    <Directory /var/www/x11/public>
+        DirectoryIndex index.php index.php
+        AllowOverride None
+        Order allow,deny
+        allow from all
+    </Directory>
+</VirtualHost>
+
+<VirtualHost 127.0.0.1:8003>
+      DocumentRoot /var/www/scrypt-n/public
+   
+      <Directory /var/www/scrypt-n/public>
+          DirectoryIndex index.php index.php
+          AllowOverride None
+          Order allow,deny
+          allow from all
+      </Directory>
+  </VirtualHost>
+```
+
+This would serve 3 separate instances of the application, installed in /var/www/{scrypt,scrypt-n,x11}. Each of these would be configured to support coins using that particular algorithm. They will also only listen on the loopback interface, avoiding exposing these services to the outside world.
 
 ## Adding new coins
 All you really need to add a new coin is the block reward subsidy function.
