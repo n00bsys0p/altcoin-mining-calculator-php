@@ -4,9 +4,11 @@ This has been entirely in community spirit, so please consider donating if you f
 
 #### DONATION ADDRESSES:
 
-BTC: 1Cca2UgfPZdieW3Fqg6B4ZLj5y3odj1HMQ
-HIRO: HFTmSXTzyZhWKN8JPiP1Lu82sx7QpGESZc
-DRK: Xs8g1qfEVzKf4Tt6hY9k7z2Sh6EX3d7vRT
+ * BTC: 1Cca2UgfPZdieW3Fqg6B4ZLj5y3odj1HMQ
+
+ * HIRO: HFTmSXTzyZhWKN8JPiP1Lu82sx7QpGESZc
+
+ * DRK: Xs8g1qfEVzKf4Tt6hY9k7z2Sh6EX3d7vRT
 
 ## Built-in currencies:
 ### X11:
