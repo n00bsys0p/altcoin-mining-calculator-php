@@ -23,5 +23,5 @@ Darkcoin:
 #Darkcoin:
 #    type: \n00bsys0p\AbeAdaptor
 #    subsidy_function: \n00bsys0p\DarkcoinSubsidyFunction
-#    url: http://explorer.darkcoin.io
+#    url: http://explorer.darkcoin.io # Note: Currently the DRK explorer API is displaying completely incorrect difficulties
 #    chain: Darkcoin

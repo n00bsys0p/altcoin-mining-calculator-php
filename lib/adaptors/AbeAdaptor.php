@@ -52,7 +52,7 @@ class AbeAdaptor extends BaseAdaptor
     public function getDifficulty()
     {
         $url = $this->_constructUrl('getdifficulty');
-        $diff = $this->client->get($url, 'diff.dat', array('max-age' => CACHE_BLOCK_TIMEOUT));
+        $diff = $this->client->get($url, 'diff_' . $this->chain . '.dat', array('max-age' => CACHE_BLOCK_TIMEOUT));
 
         if($diff == 0)
             throw new AbeException('Detected diff at 0. Please try again later.');
