@@ -26,10 +26,10 @@ class ExchangeContainer
      */
     public function __construct($config)
     {
-        foreach($config as $name => $exchange_ary)
+        foreach($config as $name => $exchange)
         {
-            $exchange_ary['name'] = $name;
-            $this->exchanges []= new Exchange($exchange_ary);
+            $exchange['name'] = $name;
+            $this->exchanges []= new Exchange($exchange);
         }
     }
 
@@ -47,9 +47,11 @@ class ExchangeContainer
             try {
                 $rate = $exchange->getBtcRate();
             } catch(\Exception $e) {
+                $rate = 0;
                 $failed++;
                 continue;
             }
+
 
             if($rate > 0)
                 $total += $rate;

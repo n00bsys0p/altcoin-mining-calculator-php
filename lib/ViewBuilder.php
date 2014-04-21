@@ -97,7 +97,25 @@ class ViewBuilder
         $selected_regex = '/>' . preg_replace('/\//', '\/', $suffix) . '/';
         $body = preg_replace($selected_regex, ' selected="selected">' . $suffix, $body);
 
+
         return $body;
+    }
+
+    /**
+     * Prepare a single profit table
+     */
+    public function prepareTableRow($data)
+    {
+        $row = $this->generateTemplate('table_row', $data);
+
+        return $row;
+    }
+
+    public function prepareTable($data)
+    {
+        $table = $this->generateTemplate('table', $data);
+
+        return $table;
     }
 
     /**

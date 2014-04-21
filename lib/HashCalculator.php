@@ -42,12 +42,31 @@ class HashCalculator {
      * @param array  $config   The application configuration
      * @param string $adaptor The class name of the adaptor to use
      */
-    public function __construct($config, $adaptor)
+    public function __construct($adaptor, $exchanges, $ticker)
     {
-        $this->config    = $config;
-        $this->adaptor  = new $adaptor($config['adaptor']);
-        $this->exchanges = new ExchangeContainer($config['exchanges']);
+        if(empty($exchanges))
+            throw new \Exception('You need to configure at least one exchange per coin.');
+
+        $this->ticker    = $ticker;
+        $this->coin      = array_keys($adaptor)[0];
+
+        $adaptorSubsidy  = new $adaptor[$this->coin]['subsidy_function'];
+        $adaptorType     = $adaptor[$this->coin]['type'];
+        $this->adaptor   = new $adaptorType($adaptor[$this->coin], $adaptorSubsidy);
+        $this->exchanges = new ExchangeContainer($exchanges);
         $this->client    = new CachingHttpClient;
+    }
+
+    /**
+     * Get coin name
+     *
+     * Return the configured coin name for this particular calculator
+     *
+     * @return string
+     */
+    public function getCoin()
+    {
+        return $this->coin;
     }
 
     /**
@@ -88,9 +107,9 @@ class HashCalculator {
      */
     public function getFiatRate($fiat_list)
     {
-        $cache_opts = array('max-age' => CACHE_EXCHANGE_TIMEOUT);
+        $cache_opts = array('max-age' => CACHE_FIAT_TIMEOUT);
         $cache_filename = 'btcticker';
-        $url = $this->config['ticker']['url'];
+        $url = $this->ticker['url'];
 
         // Replace CURR with fiat name
         $response = $this->client->get($url, $cache_filename, $cache_opts);
@@ -113,13 +132,13 @@ class HashCalculator {
      */
     protected function processFiat($fiat_list, $json)
     {
-        $json_srch = $this->config['ticker']['json_string'];
+        $json_srch = $this->ticker['json_string'];
 
         $list = array();
         foreach($fiat_list as $fiat)
         {
             // Make sure the fiat short code is in the correct format for the API
-            $ticker_ucase = $this->config['ticker']['uppercase'];
+            $ticker_ucase = $this->ticker['uppercase'];
             $fiat = ($ticker_ucase) ? strtoupper($fiat) : strtolower($fiat);
 
             // Parse the data from this currency's element

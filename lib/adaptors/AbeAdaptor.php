@@ -2,7 +2,7 @@
 
 namespace n00bsys0p;
 
-require_once(APP_DIR . '/lib/adaptors/interfaces/AdaptorInterface.php');
+require_once(APP_DIR . '/lib/adaptors/BaseAdaptor.php');
 require_once(APP_DIR . '/lib/adaptors/exceptions/AbeException.php');
 require_once(APP_DIR . '/lib/CachingHttpClient.php');
 
@@ -16,7 +16,7 @@ require_once(APP_DIR . '/lib/CachingHttpClient.php');
  * @version 0.1
  * @author Alex Shepherd (n00bsys0p) <n00b@n00bsys0p.co.uk>
  */
-abstract class AbeAdaptor implements AdaptorInterface
+class AbeAdaptor extends BaseAdaptor
 {
     protected $url = NULL;
     protected $chain = NULL;
@@ -35,6 +35,7 @@ abstract class AbeAdaptor implements AdaptorInterface
         $this->url = $config['url'];
         $this->chain = $config['chain'];
         $this->client = new CachingHttpClient;
+        $this->subsidyFunction = new $config['subsidy_function'];
 
         $reward = $this->getBlockValue($this->getBlockHeight());
         $this->setBlockReward($reward);
@@ -89,12 +90,12 @@ abstract class AbeAdaptor implements AdaptorInterface
     /**
      * Return the current block value for any given subsidy algorithm.
      *
-     * Must be implemented for any coin. Port from the original coin's
-     * subsidy function code, leaving out the transaction fees.
-     *
      * @param integer $nHeight The block height for which to check the current reward.
      */
-    abstract public function getBlockValue($nHeight);
+    public function getBlockValue($nHeight)
+    {
+        return $this->subsidyFunction->getBlockValue($nHeight);
+    }
 
     /**
      * Get the current block height.

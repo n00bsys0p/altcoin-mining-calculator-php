@@ -16,7 +16,7 @@ class CalculatorApp
 {
     protected     $config           = NULL;
     protected     $hashRate         = NULL;
-    protected     $hashCalculator   = NULL;
+    protected     $hashCalculators  = array();
     protected     $data             = array();
     protected     $output           = NULL;
     protected     $errors           = array();
@@ -55,9 +55,14 @@ class CalculatorApp
          * that's already running a full node.
          */
         $hashCalculator = $this->config['calculator']['classname'];
-        $adaptor = $this->config['adaptor']['classname'];
 
-        $this->hashCalculator = new $hashCalculator($this->config, $adaptor);
+        foreach($this->config['app']['coins'] as $coin => $settings)
+        {
+            $adaptor = array($coin => $this->config['adaptors'][$coin]);
+            $exchanges = $this->config['exchanges'][$coin];
+            $ticker = $this->config['ticker'];
+            $this->hashCalculators[$coin] = new $hashCalculator($adaptor, $exchanges, $ticker);
+        }
     }
 
     /**
@@ -73,8 +78,16 @@ class CalculatorApp
             $this->init();
             $this->requestData();
         } catch(\Exception $e) {
-            $this->errors = $this->hashCalculator->getErrors();
-            $this->errors []= $e->getMessage();
+            // Aggregate all errors from all configured calcs
+            foreach($this->hashCalculators as $calc)
+            {
+                $errors = $calc->getErrors();
+
+                if(!empty($errors))
+                    $this->errors[$calc->getCoin()] = $calc->getErrors();
+            }
+
+            $this->errors['system'] = $e->getMessage();
         }
 
         /**
@@ -125,7 +138,12 @@ class CalculatorApp
     {
         $currencies = $this->config['currencies'];
 
-        $this->data = $this->hashCalculator->calculateForHashRate($this->hashRate, array_keys($currencies));
+        foreach($this->hashCalculators as $calc)
+        {
+            $coin = $calc->getCoin();
+            $data = $calc->calculateForHashRate($this->hashRate, array_keys($currencies));
+            $this->data[$coin] = $data;
+        }
     }
 
     /**
@@ -139,11 +157,9 @@ class CalculatorApp
     protected function prepareView()
     {
         $data = $this->prepareData();
-        $appname = $this->config['appname'];
+        $appname = $this->config['app']['appname'];
 
-        /**
-         * Process any errors that have occurred
-         */
+        // NEEDS FIXING TO SUPPORT MULTIPLE COINS
         $errors = '';
         if(!empty($data['errors']))
         {
@@ -153,40 +169,51 @@ class CalculatorApp
             }
         }
 
-        /**
-         * Loop through the fiat variables, generating the required HTML
-         * to insert into the table - both for headings and values
-         */
-        $fiat_hdr = $this->viewBuilder->prepareFiatHeaders($this->config['currencies']);
-        $fiat_val = $this->viewBuilder->prepareFiatValues($this->data['fiat_per_day']);
+        $fiat_hdrs = $this->viewBuilder->prepareFiatHeaders($this->config['currencies']);
 
-        /**
-         * Prepare the main (non-fiat-specific) page content.
-         */
+        $table_rows = '';
+        foreach($this->data as $coin => $values)
+        {
+            $coin_code = $this->config['app']['coins'][$coin]['code'];
+            $fiat_values = $this->viewBuilder->prepareFiatValues($values['fiat_per_day']);
+            $table_vars = array(
+                'COINCODE' => $coin_code,
+                'COINNAME' => $coin,
+                'COINSPERDAY' => $values['coins_per_day'],
+                'BTCPERDAY' => $values['btc_per_day'],
+                'FIATPERDAY' => $fiat_values,
+                'DIFF' => $data['coins'][$coin]['difficulty'],
+            );
+
+            $table_rows .= $this->viewBuilder->prepareTableRow($table_vars);
+        }
+
         $url = '//' . $_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'];
-        $body_vars = array(
-            'URL' => $url,
-            'COINCODE' => $data['coin']['code'],
-            'HASHRATE' => explode(' ', $data['hashrate'])[0],
-            'HASHSUFFIX' => explode(' ',$data['hashrate'])[1],
-            'COINSPERDAY' => $this->data['coins_per_day'],
-            'BTCPERDAY' => $this->data['btc_per_day'],
-            'FIATPERDAY' => $fiat_val,
-            'DIFF' => $data['difficulty'],
+
+        $hr = explode(' ', $data['hashrate']);
+        $table_vars = array(
+            'HASHRATE' => $hr[0],
+            'HASHSUFFIX' => $hr[1],
+            'TABLE_ROWS' => $table_rows,
         );
 
-        $body = $this->viewBuilder->prepareBody($body_vars);
+        $table_content = $this->viewBuilder->prepareTable($table_vars);
 
-        /**
-         * Prepare the layout
-         */
+        $body_vars = array(
+            'HASHSUFFIX' => $hr[1],
+            'HASHRATE' => explode(' ', $data['hashrate'])[0],
+            'TABLES' => $table_content,
+            'URL' => $url,
+        );
+
+        $body_content = $this->viewBuilder->prepareBody($body_vars);
+
         $analytics_id = $this->config['analytics']['ua_id'];
         $analytics_url = $this->config['analytics']['ua_url'];
-        $coin = $data['coin']['name'];
-        $title = preg_replace('/\%NAME/', $coin, $appname);
+
         $page_vars = array(
-            'TITLE' => $title,
-            'BODY' => $body,
+            'TITLE' => $appname,
+            'BODY' => $body_content,
             'ERRORS' => $errors,
             'GA_UAID' => $analytics_id,
             'GA_URL' => $analytics_url,
@@ -205,7 +232,7 @@ class CalculatorApp
      */
     protected function prepareData()
     {
-        $response = array();
+        $multi_ary = array('coins' => array());
         if(!empty($this->errors))
         {
             $response['errors'] = $this->errors;
@@ -213,25 +240,33 @@ class CalculatorApp
             return $response;
         }
 
-        $response['coin'] = $this->config['app']['coin'];
-        $response['hashrate'] = ($this->hashRate) ?
+        $multi_ary['hashrate'] = ($this->hashRate) ?
             Calculator::formatHashRate($this->hashRate) :
             '0 Mh/s';
-        $response['difficulty'] = $this->hashCalculator->getDifficulty();
-        $respomse['daily_return'] = array();
-        $response['daily_return']['coins'] = $this->data['coins_per_day'];
-        $response['daily_return']['btc'] = $this->data['btc_per_day'];
-        $response['daily_return']['fiat'] = array();
 
-        foreach($this->config['currencies'] as $code => $symbol)
+        foreach($this->hashCalculators as $calc)
         {
-            $response['daily_return']['fiat'][$code] = array(
-                'symbol' => $symbol,
-                'value' => $this->data['fiat_per_day'][$code],
-            );
+            $response = array();
+
+            $coin = $calc->getCoin();
+            $response['difficulty'] = $calc->getDifficulty();
+            $response['daily_return'] = array();
+            $response['daily_return']['coins'] = $this->data[$coin]['coins_per_day'];
+            $response['daily_return']['btc'] = $this->data[$coin]['btc_per_day'];
+            $response['daily_return']['fiat'] = array();
+
+            foreach($this->config['currencies'] as $code => $symbol)
+            {
+                $response['daily_return']['fiat'][$code] = array(
+                    'symbol' => $symbol,
+                    'value' => $this->data[$coin]['fiat_per_day'][$code],
+                );
+            }
+
+            $multi_ary['coins'][$coin] = $response;
         }
 
-        return $response;
+        return $multi_ary;
     }
 
     protected function prepareJson()

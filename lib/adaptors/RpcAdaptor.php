@@ -2,7 +2,7 @@
 
 namespace n00bsys0p;
 
-require_once(APP_DIR . '/lib/adaptors/interfaces/AdaptorInterface.php');
+require_once(APP_DIR . '/lib/adaptors/BaseAdaptor.php');
 require_once(APP_DIR . '/lib/adaptors/exceptions/RPCException.php');
 
 /**
@@ -17,13 +17,16 @@ require_once(APP_DIR . '/lib/adaptors/exceptions/RPCException.php');
  * to return the current block reward. This can usually be trivially
  * ported from the coin's source code.
  */
-abstract class RpcAdaptor implements AdaptorInterface
+class RpcAdaptor extends BaseAdaptor
 {
-    // JSON RPC Client capable of RPC soec 1.0
+    // JSON RPC Client capable of RPC spec 1.0
     protected $client = NULL;
 
+    // The subsidy function provider
+    protected $subsidyFunction = NULL;
+
     // Message thrown to protect sensitive information from being leaked.
-    protected $rpc_connect_error = 'Unable to connect to RPC server. Contact server administrator.';
+    protected $rpcConnectError = 'Unable to connect to RPC server. Contact server administrator. ';
 
     /**
      * Constructor
@@ -45,22 +48,20 @@ abstract class RpcAdaptor implements AdaptorInterface
         try {
             $this->client = \Tivoka\Client::connect($url);
             $this->client->useSpec('1.0'); // Bitcoin et al use JSON RPC spec 1.0
+            $this->subsidyFunction = new $config['subsidy_function'];
         } catch(\Exception $e) {
-            throw new RPCException($this->rpc_connect_error);
+            throw new RPCException($this->rpcConnectError);
         }
     }
-
-    /**
-     * Return the block value for any given block height
-     *
-     * @return integer
-     */
-    abstract public function getBlockValue($nHeight);
 
     public function getBlockReward()
     {
         $nHeight = $this->getBlockHeight();
-        return $this->getBlockValue($nHeight);
+
+        $blockHash = $this->getBlockHash($nHeight);
+        $nBits = hexdec($this->getBlockBits($blockHash));
+
+        return $this->subsidyFunction->getBlockValue($nHeight, $nBits);
     }
 
     /**
@@ -85,6 +86,45 @@ abstract class RpcAdaptor implements AdaptorInterface
         return $diff;
     }
 
+    public function getBlockHash($nHeight)
+    {
+        $response = $this->call('getblockhash', array($nHeight));
+        return $response;
+    }
+
+    public function getBlockBits($blockHash)
+    {
+        $response = $this->call('getblock', array($blockHash));
+        return $response['bits'];
+    }
+
+    /**
+     * Convert a block's bits hex string to an actual diff.
+     *
+     * @param string $nBits The ['bits'] parameter for a block.
+     * @return float
+     */
+    public static function convertBlockBitsToDiff($nBits)
+    {
+        $nBits = hexdec($nBits);
+
+        $dDiff = (double) hexdec('0x0000ffff') / (double) ($nBits & hexdec('0x00ffffff'));
+
+        $nShift = ($nBits >> 24) & hexdec('0xff');
+        while($nShift < 29)
+        {
+            $dDiff *= 256.0;
+            $nShift++;
+        }
+        while($nShift > 29)
+        {
+            $dDiff /= 256.0;
+            $nShift--;
+        }
+
+        return $dDiff;
+    }
+
     /**
      * Call a method on the RPC client
      *
@@ -103,7 +143,7 @@ abstract class RpcAdaptor implements AdaptorInterface
             return $response->result;
         } catch(\Tivoka\Exception\ConnectionException $e) {
             // Protect against sensitive data leakage
-            throw new RPCException($this->rpc_connect_error);
+            throw new RPCException($this->rpcConnectError);
         } catch(\Exception $e) {
             throw new RPCException($e->getMessage());
         }
@@ -116,8 +156,9 @@ abstract class RpcAdaptor implements AdaptorInterface
      */
     protected function sanityCheck($config)
     {
-        if(!isset($config['user']) || !isset($config['pass']) ||
-            !isset($config['host']) || !isset($config['port']))
-            throw new \Exception('To use an RpcAdaptor, you must set user, pass. host and port in adaptor.yml');
+        if((!isset($config['user'])) || (!isset($config['pass'])) ||
+            (!isset($config['host'])) || (!isset($config['port'])) ||
+            (!isset($config['subsidy_function'])))
+            throw new \Exception('To use an RpcAdaptor, you must set user, pass, host, port and subsidy_function in adaptor.yml: ' . $msg);
     }
 }

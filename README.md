@@ -37,6 +37,17 @@ This will set your virtualhost to listen on all addresses on port 80, and serve 
 
 The dependencies for this project can be pulled in very easily using [composer](https://getcomposer.org/). Once you have composer installed, you need to run `./composer.phar install` in the folder into which you installed the application.
 
+## Adding new coins
+All you really need to add a new coin is the block reward subsidy function.
+
+Coins you wish your app to use are in config/app.yml. Set a new element in the coins array, titled the name of the coin, and containing a single attribute, `code` which is the coin's short code. You can add any coin which is configured in config/adaptors.yml and config/exchanges.yml.
+
+To implement the subsidy function and configure the adaptor, first create a class in the subsidy_functions folder that implements \n00bsys0p\SubsidyFunctionInterface, found in subsidy_functions/interfaces. This shows that you need to build a function that implements the reward subsidy function for any given coin. Some coins use the previous block's difficulty (nBits) to work out the subsidy, so that is included. Supply $nBits in integer format, not hex. If you do not require it, implement the function with a default vaue for $nBits, such as `($nHeight, $nBits = NULL)` or similar.
+
+Next, you need to configure the coin's adaptor settings in config/adaptors.yml. Check the example configuration to see your options. You can even use your own adaptors by specifying the fully namespaced class name as the `type`. Make sure you require or require_once the file that contains your subsidy_function class at some point before instantiating the application.
+
+The coin's logo should be in PNG format, and located in public/assets/img/coin_CODE.png, where CODE is the code configured in config/app.yml
+
 ## Theming
 
 Only briefly going into this.. All used templates and partials are in the /tpl folder. The format used for replacing content is to search for keys all in capitals surrounded by `{{}}`, such as `{{TITLE}}`. It's only simple, but it makes it very simple to theme to your requirements. The logo file is stored in /public/assets/img/logo.png. Simply replace this file to use your own.

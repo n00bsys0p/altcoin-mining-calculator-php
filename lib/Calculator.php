@@ -46,7 +46,7 @@ class Calculator {
         $fpd = $this->getFiatPerDay();
 
         // Format & respond
-        return array('coins_per_day' => (int) $cpd,
+        return array('coins_per_day' => $cpd,
                      'btc_per_day'   => $this->formatAsSatoshi($bpd),
                      'fiat_per_day'  => $fpd);
     }

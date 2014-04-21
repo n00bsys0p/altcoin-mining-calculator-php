@@ -14,10 +14,6 @@ namespace n00bsys0p;
 interface AdaptorInterface
 {
     /**
-     * Return the block value for any given block height
-     */
-    public function getBlockValue($nHeight);
-    /**
      * Return the CURRENT block reward
      */
     public function getBlockReward();
@@ -29,4 +25,8 @@ interface AdaptorInterface
      * Return the current network block difficulty
      */
     public function getDifficulty();
+    /**
+     * Convert a block's nBits hex to a usable difficulty
+     */
+    public static function convertBlockBitsToDiff($nBits);
 }

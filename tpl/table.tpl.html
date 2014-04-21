@@ -1,0 +1,25 @@
+<div class="row">
+    <table id="calculator-{{COINCODE}}" class="table center text-center">
+        <caption>Calculated for {{HASHRATE}}{{HASHSUFFIX}}</caption>
+        <thead>
+            <tr>
+                <th class="coin_logo"></th>
+                <th class="text-center">Coin</th>
+                <th class="text-center">Difficulty</th>
+                <th class="text-center">coins/day</th>
+                <th class="text-center">BTC/day</th>
+                <th class="text-center">
+                    <span class="curr-USD">$</span>
+                    <span class="curr-GBP">£</span>
+                    <span class="curr-CNY">¥</span>
+                    <span class="curr-EUR">€</span>/day
+                    <img id="switch" class="pulse circle" src="/assets/img/switch.png" width="25"/>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {{TABLE_ROWS}}
+        </tbody>
+        <tfoot></tfoot>
+    </table>
+</div>

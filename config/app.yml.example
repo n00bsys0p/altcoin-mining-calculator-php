@@ -1,4 +1,6 @@
-appname: Hirocoin Mining Calculator
-coin:
-    name: Hirocoin
-    code: HIRO
+appname: Mining Calculator
+coins:
+    Hirocoin:
+        code: HIRO
+    Darkcoin:
+        code: DRK

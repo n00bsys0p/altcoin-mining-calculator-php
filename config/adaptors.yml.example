@@ -1,0 +1,27 @@
+# Config settings for a selection of RPC based adaptors
+Hirocoin:
+    type: \n00bsys0p\RpcAdaptor
+    subsidy_function: \n00bsys0p\HirocoinSubsidyFunction
+    host: 127.0.0.1
+    port: 9347
+    user: hirocoinrpc
+    pass: Y0urSup3rSecretP4s5word
+Darkcoin:
+    type: \n00bsys0p\RpcAdaptor
+    subsidy_function: \n00bsys0p\DarkcoinSubsidyFunction
+    host: 127.0.0.1
+    port: 9998
+    user: darkcoinrpc
+    pass: Y0urSup3rSecretP4s5word
+
+# Config settings for Abe based adaptors
+#Hirocoin:
+#    type: \n00bsys0p\AbeAdaptor
+#    subsidy_function: \n00bsys0p\HirocoinSubsidyFunction
+#    url: http://explorer.hirocoin.org
+#    chain: Hirocoin
+#Darkcoin:
+#    type: \n00bsys0p\AbeAdaptor
+#    subsidy_function: \n00bsys0p\DarkcoinSubsidyFunction
+#    url: http://explorer.darkcoin.io
+#    chain: Darkcoin
