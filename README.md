@@ -5,9 +5,11 @@
  * Hirocoin
  * Darkcoin
  * Limecoin
+
 ### Scrypt:
  * Litecoin
  * Dogecoin
+
 ### Scrypt-n:
  * Vertcoin
  * Execoin
