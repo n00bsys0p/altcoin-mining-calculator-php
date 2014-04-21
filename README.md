@@ -1,4 +1,23 @@
-# Cryptocurrency calculator for altcoins (Hirocoin built in)
+# Cryptocurrency calculator for altcoins
+
+## Built-in currencies:
+### X11:
+ * Hirocoin
+ * Darkcoin
+ * Limecoin
+### Scrypt:
+ * Litecoin
+ * Dogecoin
+### Scrypt-n:
+ * Vertcoin
+ * Execoin
+ * GPUCoin
+
+Only the X11 coins have pre-configured adaptors and exchanges, but that should serve to be a sufficient example. The RPC and Abe interfaces for all coins are identical for all required features.
+
+You cannot set up multiple algorithms on the same instance of this application, as the hash rates won't match. To get around this, you can run multiple instances of the application, each configured for coins of a specific algorithm as the app has a built-in JSON API.
+
+## Introduction
 
 This is a PHP app for calculating profitability of Hirocoin, with the facility to extend it with ease to support almost any other altcoin.
 
@@ -10,7 +29,7 @@ The current edition uses an [ABE](https://github.com/bitcoin-abe/bitcoin-abe) da
 
 It has caching built in, in order to avoid either flooding the local daemon, or causing too many time-consuming outbound connections. It will cache block heights for a preconfigured time ($config['cache']['block_timeout'] in config/cache.yml), so configure this to be the estimated number of seconds between blocks for your application. It will also cache exchange data (including fiat), for a period of time. This is done by configuring $config['cache']['exchange_timeout'] in the same file.
 
-I have deliberately left it at a daily calculator, because many coins are now using 1 block difficulty retargeting, so trying to predict profitability for a month, or even a week can be quite misleading.
+I have deliberately left it at a daily calculator, because many coins are now using as low as 1 block difficulty retargeting, so trying to predict profitability for a month, or even a week can be quite misleading.
 
 Credit for the algorithm used to calculate the coin rewards goes to Jarred Walton (https://plus.google.com/+JarredWalton). Credit for libaries used go to their various authors.
 
