@@ -40,3 +40,8 @@ Darkcoin:
         base_url: https://www.allcoin.com/api1
         uri: pair/drk_btc
         json_key: data.trade_price
+Limecoin:
+    Swaphole:
+        base_url: http://api.swaphole.com/market
+        uri: LIM/BTC
+        json_key: ticks.0.close

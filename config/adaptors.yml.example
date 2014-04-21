@@ -13,7 +13,13 @@ Darkcoin:
     port: 9998
     user: darkcoinrpc
     pass: Y0urSup3rSecretP4s5word
-
+Limecoin:
+    type: \n00bsys0p\RpcAdaptor
+    subsidy_function: \n00bsys0p\LimecoinSubsidyFunction
+    host: 127.0.0.1
+    port: 9031
+    user: limecoinrpc
+    pass: Y0urSup3rSecretP4s5word
 # Config settings for Abe based adaptors
 #Hirocoin:
 #    type: \n00bsys0p\AbeAdaptor
@@ -25,3 +31,8 @@ Darkcoin:
 #    subsidy_function: \n00bsys0p\DarkcoinSubsidyFunction
 #    url: http://explorer.darkcoin.io # Note: Currently the DRK explorer API is displaying completely incorrect difficulties
 #    chain: Darkcoin
+#Limecoin:
+#    type: \n00bsys0p\AbeAdaptor
+#    subsidy_function: \n00bsys0p\LimecoinSubsidyFunction
+#    url: http://limecoin.coinexplorers.com
+#    chain: Limecoin
