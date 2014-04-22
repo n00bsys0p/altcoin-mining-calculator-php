@@ -52,3 +52,10 @@ Québecoin:
         get_params:
             market: BTC-QBC
         json_key: result.Bid
+Logicoin:
+    Poloniex:
+        base_url: https://poloniex.com
+        uri: public
+        get_params:
+            command: returnTicker
+        json_key: BTC_LGC.last

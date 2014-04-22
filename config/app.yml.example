@@ -8,3 +8,5 @@ coins:
         code: LIM
     Québecoin:
         code: QBC
+    Logicoin:
+        code: LGC

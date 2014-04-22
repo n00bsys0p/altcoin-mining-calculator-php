@@ -27,6 +27,13 @@ Québecoin:
     port: 56789
     user: québecoinrpc # NOTE: my system didn't like the default, so I changed it to quebecoinrpc here and in quebecoin.conf
     pass: Y0urSup3rSecretP4s5word
+Logicoin:
+    type: \n00bsys0p\RpcAdaptor
+    subsidy_function: \n00bsys0p\LogicoinSubsidyFunction
+    host: 127.0.0.1
+    port: 9652 # Default is 9998 which is stupid. Pull request issued to change this to the official default
+    user: logicoinrpc
+    pass: Y0urSup3rSecretP4s5word
 # Config settings for Abe based adaptors
 #Hirocoin:
 #    type: \n00bsys0p\AbeAdaptor
@@ -48,3 +55,4 @@ Québecoin:
 #    subsidy_function: \n00bsys0p\QuebecoinSubsidyFunction
 #    url: http://cryptexplorer.com
 #    chain: QuebeCoin
+#Logicoin: # There are no usable (with API) explorers for LGC I can find
