@@ -24,8 +24,8 @@ Québecoin:
     type: \n00bsys0p\RpcAdaptor
     subsidy_function: \n00bsys0p\LimecoinSubsidyFunction
     host: 127.0.0.1
-    port: 9031
-    user: québecoinrpc # NOTE: my system didn't like the default, so I changed it to quebecoinrpc in quebecoin.conf
+    port: 56789
+    user: québecoinrpc # NOTE: my system didn't like the default, so I changed it to quebecoinrpc here and in quebecoin.conf
     pass: Y0urSup3rSecretP4s5word
 # Config settings for Abe based adaptors
 #Hirocoin:
