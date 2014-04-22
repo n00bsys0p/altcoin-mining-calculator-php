@@ -13,6 +13,7 @@ require_once('CachingHttpClient.php');
 class Exchange
 {
     protected $name = NULL;
+    protected $coin = NULL;
     protected $client = NULL;
     protected $url = NULL;
     protected $json_key = NULL;
@@ -26,8 +27,9 @@ class Exchange
      *
      * @param array $config A single exchange's configuration
      */
-    public function __construct($config)
+    public function __construct($coin, $config)
     {
+        $this->coin = $coin;
         $this->client = new CachingHttpClient;
         $this->name = $config['name'];
 
@@ -62,7 +64,7 @@ class Exchange
     public function getBtcRate()
     {
         $cache_opts = array('max-age' => CACHE_EXCHANGE_TIMEOUT); // 15 minutes cache BTC to altcoin rate
-        $response = $this->client->get($this->url, 'btcrate_' . $this->name . '.dat', $cache_opts);
+        $response = $this->client->get($this->url, 'btcrate_' . $this->name . '_' . $this->coin . '.dat', $cache_opts);
 
         $response = $this->_getJsonValue($response, $this->json_key);
 

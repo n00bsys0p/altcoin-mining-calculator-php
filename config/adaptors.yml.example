@@ -20,6 +20,13 @@ Limecoin:
     port: 9031
     user: limecoinrpc
     pass: Y0urSup3rSecretP4s5word
+Québecoin:
+    type: \n00bsys0p\RpcAdaptor
+    subsidy_function: \n00bsys0p\LimecoinSubsidyFunction
+    host: 127.0.0.1
+    port: 9031
+    user: québecoinrpc # NOTE: my system didn't like the default, so I changed it to quebecoinrpc in quebecoin.conf
+    pass: Y0urSup3rSecretP4s5word
 # Config settings for Abe based adaptors
 #Hirocoin:
 #    type: \n00bsys0p\AbeAdaptor
@@ -36,3 +43,8 @@ Limecoin:
 #    subsidy_function: \n00bsys0p\LimecoinSubsidyFunction
 #    url: http://limecoin.coinexplorers.com
 #    chain: Limecoin
+#Québecoin:
+#    type: \n00bsys0p\AbeAdaptor
+#    subsidy_function: \n00bsys0p\QuebecoinSubsidyFunction
+#    url: http://cryptexplorer.com
+#    chain: QuebeCoin

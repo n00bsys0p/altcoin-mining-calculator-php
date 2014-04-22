@@ -4,3 +4,7 @@ coins:
         code: HIRO
     Darkcoin:
         code: DRK
+    Limecoin:
+        code: LIM
+    Québecoin:
+        code: QBC

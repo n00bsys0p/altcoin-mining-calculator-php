@@ -3,6 +3,7 @@
 namespace n00bsys0p;
 
 require_once(APP_DIR . '/lib/adaptors/BaseAdaptor.php');
+require_once(APP_DIR . '/lib/CachingRpcClient.php');
 require_once(APP_DIR . '/lib/adaptors/exceptions/RPCException.php');
 
 /**
@@ -22,35 +23,40 @@ class RpcAdaptor extends BaseAdaptor
     // JSON RPC Client capable of RPC spec 1.0
     protected $client = NULL;
 
+    // The coin to which this RPC adaptor pertains
+    protected $coin = NULL;
+
     // The subsidy function provider
     protected $subsidyFunction = NULL;
 
     // Message thrown to protect sensitive information from being leaked.
     protected $rpcConnectError = 'Unable to connect to RPC server. Contact server administrator. ';
 
+    // Used widely through the class
+    protected $cacheBlockOptions = array('max-age' => CACHE_BLOCK_TIMEOUT);
     /**
      * Constructor
      *
-     * Sanity checks the configuration and initialises
-     * the RPC client to use JSON RPC spec 1.0.
+     * Sanity checks the configuration and initialises the Caching RPC Client
      */
     public function __construct($config)
     {
         $this->sanityCheck($config);
+
+        // Use the coin name from the SubsidyFunction class name - used for caching.
+        $this->coin = str_replace('SubsidyFunction', '', end(explode('\\', $config['subsidy_function'])));
 
         $user = $config['user'];
         $pass = $config['pass'];
         $host = $config['host'];
         $port = $config['port'];
 
-        $url = "http://$user:$pass@$host:$port";
-
         try {
-            $this->client = \Tivoka\Client::connect($url);
-            $this->client->useSpec('1.0'); // Bitcoin et al use JSON RPC spec 1.0
+            $this->client = new CachingRpcClient($user, $pass, $host, $port);
             $this->subsidyFunction = new $config['subsidy_function'];
         } catch(\Exception $e) {
-            throw new RPCException($this->rpcConnectError);
+            // Protect against data leakage
+            throw new RPCException($this->rpcConnectError . 'From: ' . $this->coin . ' (Connect)');
         }
     }
 
@@ -59,7 +65,7 @@ class RpcAdaptor extends BaseAdaptor
         $nHeight = $this->getBlockHeight();
         $dDiff = $this->getDifficulty();
 
-        return $this->subsidyFunction->getBlockValue($nHeight, $diff);
+        return $this->subsidyFunction->getBlockValue($nHeight, $dDiff);
     }
 
     /**
@@ -69,7 +75,8 @@ class RpcAdaptor extends BaseAdaptor
      */
     public function getBlockHeight()
     {
-        $height = $this->call('getblockcount');
+        $command = 'getblockcount';
+        $height = $this->call($command, 'height_' . $this->coin, $this->cacheBlockOptions, array());
         return $height;
     }
 
@@ -85,24 +92,32 @@ class RpcAdaptor extends BaseAdaptor
          * difficulty than reported by getdifficulty
          */
         $nHeight = $this->getBlockHeight();
-          
+
         $blockHash = $this->getBlockHash($nHeight);
         $nBits = $this->getBlockBits($blockHash);
-        $diff = $this->convertBlockBitsToDiff($nBits);
 
-        return $diff;
+        $dDiff = $this->convertBlockBitsToDiff($nBits);
+
+        return $dDiff;
         //return $this->call('getdifficulty');
     }
 
     public function getBlockHash($nHeight)
     {
-        $response = $this->call('getblockhash', array($nHeight));
+        $filename = 'hash_' . $this->coin;
+        $cmd_args = array($nHeight);
+
+        $response = $this->call('getblockhash', $filename, $this->cacheBlockOptions, $cmd_args);
+
         return $response;
     }
 
     public function getBlockBits($blockHash)
     {
-        $response = $this->call('getblock', array($blockHash));
+        $filename = 'block_' . $this->coin;
+        $args = array($blockHash);
+        $response = $this->call('getblock', $filename, $this->cacheBlockOptions, $args);
+
         return $response['bits'];
     }
 
@@ -143,18 +158,18 @@ class RpcAdaptor extends BaseAdaptor
      * @param  array  $args   An array of arguments to pass to the method
      * @return mixed
      */
-    protected function call($method, $args = array())
+    protected function call($method, $cache_filename, $cache_opts = array(), $args = array())
     {
         try {
-            $response = $this->client->sendRequest($method, $args);
-
-            return $response->result;
-        } catch(\Tivoka\Exception\ConnectionException $e) {
+            $response = $this->client->get($method, $cache_filename, $cache_opts, $args);
+        } catch(RPCException $e) {
             // Protect against sensitive data leakage
-            throw new RPCException($this->rpcConnectError);
+            throw new RPCException($this->rpcConnectError . 'From: ' . $this->coin . ' (Call)');
         } catch(\Exception $e) {
             throw new RPCException($e->getMessage());
         }
+
+        return $response;
     }
 
     /**
@@ -167,6 +182,6 @@ class RpcAdaptor extends BaseAdaptor
         if((!isset($config['user'])) || (!isset($config['pass'])) ||
             (!isset($config['host'])) || (!isset($config['port'])) ||
             (!isset($config['subsidy_function'])))
-            throw new \Exception('To use an RpcAdaptor, you must set user, pass, host, port and subsidy_function in adaptor.yml: ' . $msg);
+            throw new \Exception('To use an RpcAdaptor, you must set user, pass, host, port and subsidy_function for the coin in adaptors.yml: ' . $msg);
     }
 }

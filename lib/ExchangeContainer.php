@@ -14,6 +14,7 @@ require_once('Exchange.php');
 class ExchangeContainer
 {
     protected $exchanges = array();
+    protected $coin = NULL;
 
     /**
      * Constructor
@@ -24,12 +25,14 @@ class ExchangeContainer
      *
      * @param array $config An object through which to iterate, and create Exchanges
      */
-    public function __construct($config)
+    public function __construct($coin, $config)
     {
+        $this->coin = $coin;
+
         foreach($config as $name => $exchange)
         {
             $exchange['name'] = $name;
-            $this->exchanges []= new Exchange($exchange);
+            $this->exchanges []= new Exchange($this->coin, $exchange);
         }
     }
 

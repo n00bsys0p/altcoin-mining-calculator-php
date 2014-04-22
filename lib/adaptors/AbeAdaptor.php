@@ -109,7 +109,7 @@ class AbeAdaptor extends BaseAdaptor
     public function getBlockHeight()
     {
         $url = $this->_constructUrl('getblockcount');
-        $height = $this->client->get($url, 'height.dat', array('max-age' => CACHE_BLOCK_TIMEOUT));
+        $height = $this->client->get($url, 'height_' . $this->chain . '.dat', array('max-age' => CACHE_BLOCK_TIMEOUT));
 
         if($height < 1)
             throw new AbeException('Current block height detected < 1. Please try again later.');

@@ -53,7 +53,7 @@ class HashCalculator {
         $adaptorSubsidy  = new $adaptor[$this->coin]['subsidy_function'];
         $adaptorType     = $adaptor[$this->coin]['type'];
         $this->adaptor   = new $adaptorType($adaptor[$this->coin], $adaptorSubsidy);
-        $this->exchanges = new ExchangeContainer($exchanges);
+        $this->exchanges = new ExchangeContainer($this->coin, $exchanges);
         $this->client    = new CachingHttpClient;
     }
 

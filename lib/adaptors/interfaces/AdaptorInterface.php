@@ -25,8 +25,4 @@ interface AdaptorInterface
      * Return the current network block difficulty
      */
     public function getDifficulty();
-    /**
-     * Convert a block's nBits hex to a usable difficulty
-     */
-    public static function convertBlockBitsToDiff($nBits);
 }
