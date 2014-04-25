@@ -33,6 +33,17 @@ class ViewBuilder
         return $this->generateTemplate('error', array('ERROR' => $error));
     }
 
+    public function prepareCurrencyList($currency_list)
+    {
+        $currency_str = '';
+        foreach($currency_list as $code => $symbol)
+        {
+            $currency_str .= $this->generateTemplate('currency_item', array('CODE' => $code));
+        }
+
+        return $currency_str;
+    }
+
     /**
      * Prepare the fiat headers partial view
      *
@@ -90,15 +101,7 @@ class ViewBuilder
      */
     public function prepareBody($data)
     {
-        $body = $this->generateTemplate('body', $data);
-
-        $suffix = $data['HASHSUFFIX'];
-        // Now choose which option is already selected
-        $selected_regex = '/>' . preg_replace('/\//', '\/', $suffix) . '/';
-        $body = preg_replace($selected_regex, ' selected="selected">' . $suffix, $body);
-
-
-        return $body;
+        return $this->generateTemplate('body', $data);
     }
 
     /**

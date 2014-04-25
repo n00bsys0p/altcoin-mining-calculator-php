@@ -29,5 +29,28 @@ table#calculator thead {
 }
 
 .coin_logo {
-    width: 30px;
+  width: 30px;
+}
+
+button.dropdown-toggle,
+span.input-group-addon {
+  border-left: none;
+  width: 25%;
+}
+
+.glyphicon.glyphicon-info-sign.alert-info {
+  background: transparent;
+  padding-top: 8px;
+  padding-left: 8px;
+}
+
+#hashrate-form input[name=hr],
+#hashrate-form input[name=perkwh],
+#hashrate-form input[name=w]
+{
+  width: 65%;
+}
+
+div.input-group.dropdown.btn-group {
+  width: 16em;
 }

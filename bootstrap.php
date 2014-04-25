@@ -19,3 +19,6 @@ define('CACHE_BLOCK_TIMEOUT', $config['cache']['block_timeout']);
 
 define('GET_PARAM_HASHRATE', 'hr');
 define('GET_PARAM_MULTIPLIER', 'hx');
+define('GET_PARAM_WATTAGE', 'w');
+define('GET_PARAM_PERKWH', 'perkwh');
+define('GET_PARAM_COSTCURRENCY', 'kwhfiat');

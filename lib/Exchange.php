@@ -3,6 +3,7 @@
 namespace n00bsys0p;
 
 require_once('CachingHttpClient.php');
+require_once('exceptions/ExchangeException.php');
 
 /**
  * A single Exchange object
@@ -99,7 +100,7 @@ class Exchange
                 $result = (is_array($result)) ? $result[$key] : $result->$key;
         }
         else
-            throw new JsonException('Unable to decode JSON from response: ' . $json_string);
+            throw new ExchangeException('Unable to decode JSON from response: ' . $json_string);
 
         return $result;
     }

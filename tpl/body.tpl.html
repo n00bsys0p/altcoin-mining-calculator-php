@@ -1,19 +1,78 @@
 <div class="panel panel-default">
     <div class="panel-body">
         <div class="row">
-            <form method="get" id="hashrate-form" action="{{URL}}" class="text-center">
-                <label for="hr" id="hashrate-label">Hash Rate</label>
-                <input name="hr" type="text" placeholder="2.0" value="{{HASHRATE}}" style="width: 100px;"/>
-                <select name="hx">
-                    <option value="1">h/s</option> 
-                    <option value="1000">Kh/s</option> 
-                    <option value="1000000">Mh/s</option> 
-                    <option value="1000000000">Gh/s</option> 
-                    <option value="10000000000">Th/s</option> 
-                    <option value="10000000000000">Ph/s</option> 
-                </select>
-                <input type="submit" id="calchash" class="btn btn-success" value="Calculate" />
-            </form>
+            <div class="col-sm-12">
+                <form method="get" id="hashrate-form" action="{{URL}}" class="form-horizontal" role="form">
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="hr" id="hashrate-label" class="col-sm-5 control-label">Hash Rate</label>
+                            <div class='input-group dropdown btn-group' data-select='true'>
+                                <input name="hr" type="text" placeholder="2.0" value="{{HASHRATE}}" class="form-control" />
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    {{HASHSUFFIX}} 
+                                    <span class="caret"></span>
+                                </button>
+                                <input name="hx" type='hidden' value='1000000' class='dropdown-field' />
+                                <ul class="dropdown-menu pull-right">
+                                    <li><a href='#' data-value='1'>h/s</a></li>
+                                    <li><a href='#' data-value='1000'>Kh/s</a></li>
+                                    <li><a href='#' data-value='1000000'>Mh/s</a></li>
+                                    <li><a href='#' data-value='1000000000'>Gh/s</a></li>
+                                    <li><a href='#' data-value='1000000000000'>Th/s</a></li>
+                                    <li><a href='#' data-value='1000000000000000'>Ph/s</a></li>
+                                </ul>
+                                <span class="glyphicon glyphicon-info-sign alert-info" data-toggle="tooltip" title="Please make sure you have the correct multiplier selected."></span>
+                            </div>
+                            <div class="text-center">
+                                <hr />
+                                <a id="advanced_options" href="#">
+                                    <span class="glyphicon glyphicon-plus" data-toggle="tooltip" title="Advanced Options"></span> Advanced Options
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="power_costs">
+                        <div class="row">
+                            <div class="form-group">
+                                <label for="w" id="w-label" class="control-label col-sm-5">Wattage</label>
+                                <div class='input-group dropdown btn-group' data-select='true'>
+                                    <input name="w" type="text" placeholder="500" value="{{WATTAGE}}" class="form-control" />
+                                    <button type="button" class="btn btn-disabled dropdown-toggle">
+                                        W
+                                    </button>
+                                    <span class="glyphicon glyphicon-info-sign alert-info" data-toggle="tooltip" title="Enter the wattage draw at the wall."></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <label for="perkwh" id="perkwh-label" class="control-label col-sm-5">Cost per kwh</label>
+                                <div class='input-group dropdown btn-group' data-select='true'>
+                                    <input name="perkwh" type="text" placeholder="0.25" value="{{PERKWH}}" class="form-control" />
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                        {{CURRENCY}}
+                                        <span class="caret"></span>
+                                    </button>
+                                    <input name="kwhfiat" type='hidden' value='{{CURRENCY}}' class='dropdown-field' />
+                                    <ul class="dropdown-menu pull-right">
+                                        <!--<li><a href='#' data-value='GBP'>GBP</a></li>
+                                        <li><a href='#' data-value='USD'>USD</a></li>
+                                        <li><a href='#' data-value='EUR'>EUR</a></li>
+                                        <li><a href='#' data-value='CNY'>CNY</a></li>-->
+                                        {{CURRENCIES_LIST}}
+                                    </ul>
+                                    <span class="glyphicon glyphicon-info-sign alert-info" data-toggle="tooltip" title="Ensure you have the correct currency selected."></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="text-center">
+                            <input type="submit" id="calchash" class="btn btn-success" value="Calculate" />
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
         <div class="row">
             <hr />

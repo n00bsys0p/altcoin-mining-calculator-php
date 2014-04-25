@@ -4,6 +4,8 @@ namespace n00bsys0p;
 
 require_once('HashCalculator.php');
 require_once('ViewBuilder.php');
+require_once('ExchangeRateConverter.php');
+require_once('CalculatorException.php');
 
 /**
  * Cryptocurrency Hash Calculator Application
@@ -15,12 +17,16 @@ require_once('ViewBuilder.php');
 class CalculatorApp
 {
     protected     $config           = NULL;
-    protected     $hashRate         = NULL;
+    protected     $hashRate         = 0;
+    protected     $wattage          = 0;
+    protected     $perkwh           = 0;
+    protected     $kwhfiat          = 'USD';
     protected     $hashCalculators  = array();
     protected     $data             = array();
     protected     $output           = NULL;
     protected     $errors           = array();
     protected     $displayFormat    = 'html';
+    protected     $exchangeRates    = array();
     public static $supportedFormats = array('html', 'json');
 
     /**
@@ -44,18 +50,9 @@ class CalculatorApp
         if($this->displayFormat == 'html')
            $this->viewBuilder = new ViewBuilder();
 
-        /**
-         * We use dependency injection to inject the correct
-         * adaptor because we have to customise the block
-         * reward subsidy for most different alt coins. You
-         * can also choose to inject your own calculator.
-         *
-         * The adaptor can also optionally be an RPC based
-         * adaptor, for quicker response times in a machine
-         * that's already running a full node.
-         */
         $hashCalculator = $this->config['calculator']['classname'];
 
+        // Loop through coins, creating a hash calculator instance for each
         foreach($this->config['app']['coins'] as $coin => $settings)
         {
             $adaptor = array($coin => $this->config['adaptors'][$coin]);
@@ -110,21 +107,34 @@ class CalculatorApp
     /**
      * Initialise the calculator application
      *
-     * This sanity checks and sets sane defaults for the
-     * user-defined variables.
+     * This sanity checks then sets all required user-defined variables from
+     * input.
      */
     protected function init()
     {
-        // Sanity checks
-        $hashrate = isset($_GET[GET_PARAM_HASHRATE]) ? $_GET[GET_PARAM_HASHRATE] : 0;
-        $multiplier = isset($_GET[GET_PARAM_MULTIPLIER]) ? $_GET[GET_PARAM_MULTIPLIER] : 1;
+        // Fill out internal data if required
+        $multiplier = (isset($_GET[GET_PARAM_MULTIPLIER])) ? $_GET[GET_PARAM_MULTIPLIER] : 1;
+        $hashrate = (isset($_GET[GET_PARAM_HASHRATE])) ? $_GET[GET_PARAM_HASHRATE] : $this->hashRate;
 
-        if(!is_numeric($hashrate))
-            $hashrate = 0;
-        if(!is_numeric($multiplier))
-            $multiplier = 1;
+        $wattage = (isset($_GET[GET_PARAM_WATTAGE])) ? $_GET[GET_PARAM_WATTAGE] : $this->wattage;
+        $perkwh = (isset($_GET[GET_PARAM_PERKWH])) ? $_GET[GET_PARAM_PERKWH] : $this->perkwh;
+        $kwhfiat = (isset($_GET[GET_PARAM_COSTCURRENCY])) ? $_GET[GET_PARAM_COSTCURRENCY] : $this->kwhfiat;
 
-        $this->hashRate = $hashrate *= $multiplier;
+        // Make sure the fiat currency the /kwh is supplied in is sane
+        if(!preg_match('/^[A-Z]{3}$/', $kwhfiat))
+            throw new CalculatorException('Incorrectly formatted fiat cost currency.');
+
+        // If any of these aren't numeric, make them so
+        if(!is_numeric($hashrate))   $hashrate = 0;
+        if(!is_numeric($multiplier)) $multiplier = 1;
+        if(!is_numeric($wattage))    $wattage = 0;
+        if(!is_numeric($perkwh))     $perkwh = 0;
+
+        // Set the internal values now we're fairly certain it's all ok
+        $this->hashRate = $hashrate * $multiplier;
+        $this->wattage = $wattage;
+        $this->perkwh = $perkwh;
+        $this->kwhfiat = $kwhfiat;
     }
 
     /**
@@ -158,8 +168,8 @@ class CalculatorApp
     {
         $data = $this->prepareData();
         $appname = $this->config['app']['appname'];
+        $page_vars = array();
 
-        // NEEDS FIXING TO SUPPORT MULTIPLE COINS
         $errors = '';
         if(!empty($data['errors']))
         {
@@ -167,7 +177,9 @@ class CalculatorApp
             {
                 $errors .= $this->viewBuilder->prepareError($err);
             }
-        }
+
+            $page_vars['ERRORS'] = $errors;
+        } else $page_vars['ERRORS'] = NULL;
 
         $fiat_hdrs = $this->viewBuilder->prepareFiatHeaders($this->config['currencies']);
 
@@ -176,12 +188,19 @@ class CalculatorApp
         {
             $coin_code = $this->config['app']['coins'][$coin]['code'];
             $fiat_values = $this->viewBuilder->prepareFiatValues($values['fiat_per_day']);
+            $net_base_values = array();
+
+            foreach($data['coins'][$coin]['daily_return']['fiat'] as $fiat_currency => $detail)
+                $net_base_values[$fiat_currency] = $detail['net'];
+
+            $net_values = $this->viewBuilder->prepareFiatValues($net_base_values);
             $table_vars = array(
                 'COINCODE' => $coin_code,
                 'COINNAME' => $coin,
                 'COINSPERDAY' => $values['coins_per_day'],
                 'BTCPERDAY' => $values['btc_per_day'],
                 'FIATPERDAY' => $fiat_values,
+                'NETPERDAY' => $net_values,
                 'DIFF' => $data['coins'][$coin]['difficulty'],
             );
 
@@ -202,6 +221,10 @@ class CalculatorApp
         $body_vars = array(
             'HASHSUFFIX' => $hr[1],
             'HASHRATE' => explode(' ', $data['hashrate'])[0],
+            'WATTAGE' => $this->wattage,
+            'PERKWH' => $this->perkwh,
+            'CURRENCY' => $this->kwhfiat,
+            'CURRENCIES_LIST' => $this->viewBuilder->prepareCurrencyList($this->config['currencies']),
             'TABLES' => $table_content,
             'URL' => $url,
         );
@@ -211,13 +234,10 @@ class CalculatorApp
         $analytics_id = $this->config['analytics']['ua_id'];
         $analytics_url = $this->config['analytics']['ua_url'];
 
-        $page_vars = array(
-            'TITLE' => $appname,
-            'BODY' => $body_content,
-            'ERRORS' => $errors,
-            'GA_UAID' => $analytics_id,
-            'GA_URL' => $analytics_url,
-        );
+        $page_vars['TITLE'] = $appname;
+        $page_vars['BODY'] = $body_content;
+        $page_vars['GA_UAID'] = $analytics_id;
+        $page_vars['GA_URL'] = $analytics_url;
 
         $this->output = $this->viewBuilder->prepareLayout($page_vars);
     }
@@ -240,9 +260,15 @@ class CalculatorApp
             return $response;
         }
 
-        $multi_ary['hashrate'] = ($this->hashRate) ?
+        $multi_ary['hashrate'] = ($this->hashRate > 0) ?
             Calculator::formatHashRate($this->hashRate) :
             '0 Mh/s';
+
+        $fromCode = $this->kwhfiat;
+        $multi_ary['wattage'] = $this->wattage . 'W';
+        $multi_ary['perkwh'] = $this->perkwh . $fromCode;
+
+        $currency_converter = new ExchangeRateConverter;
 
         foreach($this->hashCalculators as $calc)
         {
@@ -255,12 +281,20 @@ class CalculatorApp
             $response['daily_return']['btc'] = $this->data[$coin]['btc_per_day'];
             $response['daily_return']['fiat'] = array();
 
-            foreach($this->config['currencies'] as $code => $symbol)
+            foreach($this->config['currencies'] as $toCode => $symbol)
             {
-                $response['daily_return']['fiat'][$code] = array(
-                    'symbol' => $symbol,
-                    'value' => $this->data[$coin]['fiat_per_day'][$code],
-                );
+                // Totals
+                $response['daily_return']['fiat'][$toCode] = array();
+                $response['daily_return']['fiat'][$toCode]['symbol'] = $symbol;
+                $total = $this->data[$coin]['fiat_per_day'][$toCode];
+                $response['daily_return']['fiat'][$toCode]['total'] = $total;
+
+                // Net
+                $costPerDay = (($this->wattage / 1000) * $this->perkwh * 24);
+                $converted_cost = $currency_converter->convert($fromCode, $toCode, $costPerDay);
+                $net = $total - $converted_cost;
+                $response['daily_return']['fiat'][$toCode]['cost'] = $converted_cost;
+                $response['daily_return']['fiat'][$toCode]['net'] = sprintf('%.02f', $net);
             }
 
             $multi_ary['coins'][$coin] = $response;

@@ -60,8 +60,6 @@ class CachingRpcClient
      */
     protected function getOrCache($method, $cache_filename, $cache_opts, $method_args)
     {
-        //error_log('RPCClient ('.$cache_filename.'): ' . $method . ' (' . str_replace("\n", '', print_r($method_args, TRUE)) . ')');
-
         try {
             $result = $this->cache->getOrCreate($cache_filename, $cache_opts, function($filename) use($method, $method_args) {
                 $url = $this->url;
