@@ -10,3 +10,5 @@ coins:
         code: QBC
     Logicoin:
         code: LGC
+    Muniti:
+        code: MUN

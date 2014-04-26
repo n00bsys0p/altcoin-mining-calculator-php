@@ -9,7 +9,7 @@
                             <div class='input-group dropdown btn-group' data-select='true'>
                                 <input name="hr" type="text" placeholder="2.0" value="{{HASHRATE}}" class="form-control" />
                                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                    {{HASHSUFFIX}} 
+                                    {{HASHSUFFIX}}
                                     <span class="caret"></span>
                                 </button>
                                 <input name="hx" type='hidden' value='1000000' class='dropdown-field' />
@@ -55,10 +55,6 @@
                                     </button>
                                     <input name="kwhfiat" type='hidden' value='{{CURRENCY}}' class='dropdown-field' />
                                     <ul class="dropdown-menu pull-right">
-                                        <!--<li><a href='#' data-value='GBP'>GBP</a></li>
-                                        <li><a href='#' data-value='USD'>USD</a></li>
-                                        <li><a href='#' data-value='EUR'>EUR</a></li>
-                                        <li><a href='#' data-value='CNY'>CNY</a></li>-->
                                         {{CURRENCIES_LIST}}
                                     </ul>
                                     <span class="glyphicon glyphicon-info-sign alert-info" data-toggle="tooltip" title="Ensure you have the correct currency selected."></span>
@@ -81,7 +77,9 @@
     </div>
     <div class="panel-footer">
         <p class="text-center">If you like this or find it useful, please donate!<br />
-        HIRO: HBJECs56vX1kW4XLkyVTpmHNMSP4cAfjic</p>
+        HIRO: <a href="#" onclick="javascript:displayDonationAddress('Hirocoin', 'HBJECs56vX1kW4XLkyVTpmHNMSP4cAfjic');">HBJECs56vX1kW4XLkyVTpmHNMSP4cAfjic</a><br />
+        DRK: <a href="#" onclick="javascript:displayDonationAddress('Darkcoin', 'XgCFhoFYTSr1cmp6mktqBoFitqsMAV5Ypb');">XgCFhoFYTSr1cmp6mktqBoFitqsMAV5Ypb</a><br />
+        LGC: <a href="#" onclick="javascript:displayDonationAddress('Logicoin', 'LXXLTnVubZQhVKvvjEmGoKGByZokAhqq5j');">LXXLTnVubZQhVKvvjEmGoKGByZokAhqq5j</a><br />
         <p class="text-center"><a href="https://github.com/n00bsys0p/altcoin-mining-calculator-php" target="_blank">Altcoin Mining Calculator</a> &copy; 2014 <a href="https://github.com/n00bsys0p" target="_blank">Alex Shepherd (n00bsys0p)</a></p>
     </div>
 </div>

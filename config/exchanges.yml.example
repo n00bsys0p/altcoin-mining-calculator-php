@@ -59,3 +59,10 @@ Logicoin:
         get_params:
             command: returnTicker
         json_key: BTC_LGC.last
+Muniti:
+    Bittrex:
+        base_url: https://bittrex.com/api/v1/public
+        uri: getticker
+        get_params:
+            market: BTC-MUN
+        json_key: result.Bid

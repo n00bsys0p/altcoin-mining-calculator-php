@@ -210,6 +210,7 @@ class CalculatorApp
         $url = '//' . $_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'];
 
         $hr = explode(' ', $data['hashrate']);
+
         $table_vars = array(
             'HASHRATE' => $hr[0],
             'HASHSUFFIX' => $hr[1],

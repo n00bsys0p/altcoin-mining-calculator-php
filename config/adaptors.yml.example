@@ -31,8 +31,15 @@ Logicoin:
     type: \n00bsys0p\RpcAdaptor
     subsidy_function: \n00bsys0p\LogicoinSubsidyFunction
     host: 127.0.0.1
-    port: 9652 # Default is 9998 which is stupid. Pull request issued to change this to the official default
+    port: 9652
     user: logicoinrpc
+    pass: Y0urSup3rSecretP4s5word
+Muniti:
+    type: \n00bsys0p\RpcAdaptor
+    subsidy_function: \n00bsys0p\MunitiSubsidyFunction
+    host: 127.0.0.1
+    port: 3519
+    user: Munitirpc
     pass: Y0urSup3rSecretP4s5word
 # Config settings for Abe based adaptors
 #Hirocoin:
