@@ -1,17 +1,27 @@
 appname: Mining Calculator
-#logo: logo.png # Located in public/assets/img/
+logo: logo.png
 coins:
     Hirocoin:
         code: HIRO
+        url: https://www.hirocoin.org/
     Darkcoin:
         code: DRK
+        url: http://darkcoin.io/
     Limecoin:
         code: LIM
+        url: http://www.limecoin.org/
     Québecoin:
         code: QBC
+        url: http://www.qbc.io/‎
     Logicoin:
         code: LGC
+        url: http://logicoin.info/
     Muniti:
         code: MUN
+        url: http://www.muniticoin.com/‎
     GlobalDenomination:
         code: GDN
+        url: http://globaldenomination.org/
+    HighFiveCoin:
+        code: H5C
+        url: http://h5coin.com/
