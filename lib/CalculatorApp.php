@@ -56,7 +56,11 @@ class CalculatorApp
         foreach($this->config['app']['coins'] as $coin => $settings)
         {
             $adaptor = array($coin => $this->config['adaptors'][$coin]);
-            $exchanges = $this->config['exchanges'][$coin];
+            if(isset($this->config['exchanges'][$coin]))
+                $exchanges = $this->config['exchanges'][$coin];
+            else
+                throw new \Exception('You must configure at least one exchange for ' . $coin);
+
             $ticker = $this->config['ticker'];
             $this->hashCalculators[$coin] = new $hashCalculator($adaptor, $exchanges, $ticker);
         }

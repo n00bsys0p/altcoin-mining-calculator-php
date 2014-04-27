@@ -9,6 +9,8 @@ require_once(APP_DIR . '/subsidy_functions/LimecoinSubsidyFunction.php');
 require_once(APP_DIR . '/subsidy_functions/QuebecoinSubsidyFunction.php');
 require_once(APP_DIR . '/subsidy_functions/LogicoinSubsidyFunction.php');
 require_once(APP_DIR . '/subsidy_functions/MunitiSubsidyFunction.php');
+require_once(APP_DIR . '/subsidy_functions/GlobalDenominationSubsidyFunction.php');
+require_once(APP_DIR . '/subsidy_functions/HighFiveCoinSubsidyFunction.php');
 
 $app = new \n00bsys0p\CalculatorApp($config);
 

@@ -34,7 +34,9 @@ class Exchange
         $this->client = new CachingHttpClient;
         $this->name = $config['name'];
 
-        $this->json_key = $config['json_key'];
+        if(isset($config['json_key']))
+            $this->json_key = $config['json_key'];
+
         $this->url = $config['base_url'] . '/' . $config['uri'];
 
         // Append any necessary get parameters

@@ -2,4 +2,5 @@ cache/*
 vendor/*
 composer.lock
 config/*.yml
+public/assets/img/logo.png
 *.swp

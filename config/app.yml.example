@@ -1,5 +1,5 @@
 appname: Mining Calculator
-logo: logo.png
+#logo: logo.png # Located in public/assets/img/
 coins:
     Hirocoin:
         code: HIRO
@@ -13,3 +13,5 @@ coins:
         code: LGC
     Muniti:
         code: MUN
+    GlobalDenomination:
+        code: GDN
