@@ -41,10 +41,9 @@ class CalculatorApp
     {
         $this->config = $config;
 
-        $format = isset($_GET['fmt']) ? $_GET['fmt'] : NULL;
-        if(!is_null($format))
-            if(in_array($format, static::$supportedFormats))
-                $this->displayFormat = $format;
+        $format = isset($_GET['fmt']) ? $_GET['fmt'] : $this->displayFormat;
+        if(in_array($format, static::$supportedFormats))
+            $this->displayFormat = $format;
 
         // Only instantiate the view builder if it's not an API request
         if($this->displayFormat == 'html')
