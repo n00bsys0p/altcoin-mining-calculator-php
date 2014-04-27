@@ -73,3 +73,10 @@ GlobalDenomination:
         get_params:
             command: returnTicker
         json_key: BTC_GDN.last
+HighFiveCoin:
+    Bittrex:
+        base_url: https://bittrex.com/api/v1/public
+        uri: getticker
+        get_params:
+            market: BTC-H5C
+        json_key: result.Bid
