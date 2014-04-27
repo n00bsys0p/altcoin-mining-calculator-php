@@ -197,8 +197,10 @@ class CalculatorApp
                 $net_base_values[$fiat_currency] = $detail['net'];
 
             $net_values = $this->viewBuilder->prepareFiatValues($net_base_values);
+            $coinurl = (isset($this->config['app']['coins'][$coin]['url'])) ? $this->config['app']['coins'][$coin]['url'] : '#';
             $table_vars = array(
                 'COINCODE' => $coin_code,
+                'URL' => $this->config['app']['coins'][$coin]['url'],
                 'COINNAME' => $coin,
                 'COINSPERDAY' => $values['coins_per_day'],
                 'BTCPERDAY' => $values['btc_per_day'],
