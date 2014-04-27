@@ -41,6 +41,20 @@ Muniti:
     port: 3519
     user: Munitirpc
     pass: Y0urSup3rSecretP4s5word
+GlobalDenomination:
+    type: \n00bsys0p\RpcAdaptor
+    subsidy_function: \n00bsys0p\GlobalDenominationSubsidyFunction
+    host: 127.0.0.1
+    port: 38347
+    user: GlobalDenominationrpc
+    pass: Y0urSup3rSecretP4s5word
+HighFiveCoin:
+    type: \n00bsys0p\RpcAdaptor
+    subsidy_function: \n00bsys0p\HighFiveCoinSubsidyFunction
+    host: 127.0.0.1
+    port: 3555
+    user: HighFiveCoinrpc
+    pass: Y0urSup3rSecretP4s5word
 # Config settings for Abe based adaptors
 #Hirocoin:
 #    type: \n00bsys0p\AbeAdaptor
@@ -63,3 +77,10 @@ Muniti:
 #    url: http://cryptexplorer.com
 #    chain: QuebeCoin
 #Logicoin: # There are no usable (with API) explorers for LGC I can find
+#Muniti: # There are no usable (with API) explorers for LGC I can find
+#GlobalDenomination: # There are no usable (with API) explorers for LGC I can find
+#HighFiveCoin:
+#   type: \n00bsys0p\AbeAdaptor
+#   subsidy_function: \n00bsys0p\HighFiveCoinSubsidyFunction
+#   url: http://explorer.altcoinmania.org:2750
+#   chain: HighFiveCoin
