@@ -33,6 +33,11 @@ class ViewBuilder
         return $this->generateTemplate('error', array('ERROR' => $error));
     }
 
+    public function prepareLogo($filename, $title)
+    {
+        return '<img id="logo" src="/assets/img/' . $filename . '" alt="' . $title . '" width="200" />';
+    }
+
     public function prepareCurrencyList($currency_list)
     {
         $currency_str = '';

@@ -2,10 +2,11 @@ body {
   padding: 2em;
 }
 
-#logo {
+img#logo {
   display: block;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 2em;
 }
 
 table#calculator th,
@@ -51,6 +52,14 @@ span.input-group-addon {
   width: 65%;
 }
 
+#section_main {
+  margin-top: 50px;
+}
+
 div.input-group.dropdown.btn-group {
   width: 16em;
+}
+
+#advanced_options_wrapper {
+    padding-top: 1em;
 }

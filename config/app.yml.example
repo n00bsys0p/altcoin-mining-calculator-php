@@ -1,4 +1,5 @@
 appname: Mining Calculator
+logo: logo.png
 coins:
     Hirocoin:
         code: HIRO

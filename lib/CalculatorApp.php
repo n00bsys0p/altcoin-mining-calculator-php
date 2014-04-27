@@ -232,10 +232,14 @@ class CalculatorApp
 
         $body_content = $this->viewBuilder->prepareBody($body_vars);
 
+        $logo = (isset($this->config['app']['logo'])) ?
+            $this->viewBuilder->prepareLogo($this->config['app']['logo'], $appname) :
+            "";
         $analytics_id = $this->config['analytics']['ua_id'];
         $analytics_url = $this->config['analytics']['ua_url'];
 
         $page_vars['TITLE'] = $appname;
+        $page_vars['LOGO'] = $logo;
         $page_vars['BODY'] = $body_content;
         $page_vars['GA_UAID'] = $analytics_id;
         $page_vars['GA_URL'] = $analytics_url;
