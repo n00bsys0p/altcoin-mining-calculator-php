@@ -28,3 +28,6 @@ coins:
     Givecoin:
         code: GIVE
         url: http://givecoin.info/
+    Hashcoin:
+        code: HASH
+        url: http://www.hashcoin.me/
