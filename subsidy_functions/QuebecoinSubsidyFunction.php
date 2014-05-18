@@ -10,15 +10,12 @@ require_once(APP_DIR . '/subsidy_functions/interfaces/SubsidyFunctionInterface.p
 class QuebecoinSubsidyFunction implements SubsidyFunctionInterface
 {
     /**
-     * Ported directly from Hirocoin source code, ignoring txfees
-     * $dDiff is not required for this subsidy so supply NULL or
-     * any other value.
+     * Ported directly from Quebecoin source code, ignoring txfees
      *
      * @param  integer $nHeight The block height for which to determine the reward
-     * @param  float   $dDiff   The difficulty of the last block
      * @return float
      */
-    public function getBlockValue($nHeight, $dDiff)
+    public function getBlockValue($nHeight)
     {
         $nSubsidy = 26; // Original block reward
 

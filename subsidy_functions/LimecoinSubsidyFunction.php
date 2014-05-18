@@ -10,14 +10,13 @@ require_once(APP_DIR . '/subsidy_functions/interfaces/SubsidyFunctionInterface.p
 class LimecoinSubsidyFunction implements SubsidyFunctionInterface
 {
     /**
-     * Limecoin's block reward is just 100. No subsidy over time. Supply
-     * whatever random details you like to the function.
+     * Limecoin's block reward is just 100. No subsidy over time. You don't
+     * need to supply any parameters.
      *
      * @param  integer $nHeight The block height for which to determine the reward
-     * @param  float   $dDiff   The difficulty of the last block
      * @return float
      */
-    public function getBlockValue($nHeight, $dDiff)
+    public function getBlockValue($nHeight = NULL)
     {
         $nSubsidy = 100; // Original block reward
 

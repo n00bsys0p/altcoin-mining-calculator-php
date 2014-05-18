@@ -41,10 +41,12 @@ Darkcoin:
         uri: pair/drk_btc
         json_key: data.trade_price
 Limecoin:
-    Swaphole:
-        base_url: http://api.swaphole.com/market
-        uri: LIM/BTC
-        json_key: ticks.0.close
+    Bittrex:
+        base_url: https://bittrex.com/api/v1/public
+        uri: getticker
+        get_params:
+            market: BTC-LIM
+        json_key: result.Bid
 Québecoin:
     Bittrex:
         base_url: https://bittrex.com/api/v1/public
@@ -80,3 +82,21 @@ HighFiveCoin:
         get_params:
             market: BTC-H5C
         json_key: result.Bid
+Givecoin:
+     Bittrex:
+        base_url: https://bittrex.com/api/v1/public
+        uri: getticker
+        get_params:
+            market: BTC-GIVE
+        json_key: result.Bid
+Hashcoin:
+    Bittrex:
+        base_url: https://bittrex.com/api/v1/public
+        uri: getticker
+        get_params:
+            market: BTC-HASH
+        json_key: result.Bid
+    Allcoin:
+        base_url: https://www.allcoin.com/api1
+        uri: pair/hash_btc
+        json_key: data.trade_price

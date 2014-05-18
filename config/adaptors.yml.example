@@ -55,6 +55,20 @@ HighFiveCoin:
     port: 3555
     user: HighFiveCoinrpc
     pass: Y0urSup3rSecretP4s5word
+Givecoin:
+    type: \n00bsys0p\RpcAdaptor
+    subsidy_function: \n00bsys0p\GivecoinSubsidyFunction
+    host: 127.0.0.1
+    port: 31410
+    user: Givecoinrpc
+    pass: Y0urSup3rSecretP4s5word
+Hashcoin:
+    type: \n00bsys0p\RpcAdaptor
+    subsidy_function: \n00bsys0p\HashcoinSubsidyFunction
+    host: 127.0.0.1
+    port: 64699
+    user: hashcoinrpc
+    pass: Y0urSup3rSecretP4s5word
 # Config settings for Abe based adaptors
 #Hirocoin:
 #    type: \n00bsys0p\AbeAdaptor

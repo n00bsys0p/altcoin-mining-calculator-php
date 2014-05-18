@@ -13,10 +13,9 @@ class GpucoinSubsidyFunction implements SubsidyFunctionInterface
      * GPUCoin subsidy function
      *
      * @param  integer $nHeight The block height for which to determine the reward
-     * @param  float   $dDiff   The difficulty of the last block. Not required for GPUCoin
      * @return integer
      */
-    public function getBlockValue($nHeight, $dDiff)
+    public function getBlockValue($nHeight)
     {
         if($nHeight <= 65535)
             $nSubsidy = 20000;

@@ -13,10 +13,9 @@ class LitecoinSubsidyFunction implements SubsidyFunctionInterface
      * Litecoin subsidy function
      *
      * @param  integer $nHeight The block height for which to determine the reward
-     * @param  float   $dDiff   The difficulty of the last block. Not required for Litecoin
      * @return float
      */
-    public function getBlockValue($nHeight, $dDiff)
+    public function getBlockValue($nHeight)
     {
         $nSubsidy = 50; // Original block reward
 

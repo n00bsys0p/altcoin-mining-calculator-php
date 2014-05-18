@@ -14,9 +14,9 @@ interface SubsidyFunctionInterface
 {
     /**
      * Some block rewards use the diff of the previous block
-     * to determine the next value, so you must supply it, even
-     * if your coin does not require it. If you don't use it, just
-     * enter NULL or similar
+     * to determine the next value, and PHP doesn't hate it
+     * if you have extra parameters in implementations of the
+     * interface
      */
-    public function getBlockValue($nHeight, $dDiff);
+    public function getBlockValue($nHeight);
 }

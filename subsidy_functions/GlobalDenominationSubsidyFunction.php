@@ -12,11 +12,12 @@ class GlobalDenominationSubsidyFunction implements SubsidyFunctionInterface
     /**
      * GlobalDenomination's subsidy function ported from GetBlockValue
      *
+     * Diff is not required for this function
+     *
      * @param  integer $nHeight The block height for which to find the subsidy
-     * @param  integer $dDiff   The given block's difficulty
      * @return float
      */
-    public function getBlockValue($nHeight, $dDiff)
+    public function getBlockValue($nHeight)
     {
         $nSubsidy = 40;
 

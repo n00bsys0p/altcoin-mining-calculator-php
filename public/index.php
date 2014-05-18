@@ -11,6 +11,8 @@ require_once(APP_DIR . '/subsidy_functions/LogicoinSubsidyFunction.php');
 require_once(APP_DIR . '/subsidy_functions/MunitiSubsidyFunction.php');
 require_once(APP_DIR . '/subsidy_functions/GlobalDenominationSubsidyFunction.php');
 require_once(APP_DIR . '/subsidy_functions/HighFiveCoinSubsidyFunction.php');
+require_once(APP_DIR . '/subsidy_functions/GivecoinSubsidyFunction.php');
+require_once(APP_DIR . '/subsidy_functions/HashcoinSubsidyFunction.php');
 
 $app = new \n00bsys0p\CalculatorApp($config);
 

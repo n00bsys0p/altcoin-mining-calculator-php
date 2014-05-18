@@ -16,10 +16,9 @@ class DogecoinSubsidyFunction implements SubsidyFunctionInterface
      * include any of the pre-190000 hard forks.
      *
      * @param  integer $nHeight The block height for which to determine the reward
-     * @param  float   $dDiff   The difficulty of the last block. Not required for Dogecoin
      * @return float
      */
-    public function getBlockValue($nHeight, $dDiff)
+    public function getBlockValue($nHeight)
     {
         $nSubsidy = 500000; // Original block reward
 

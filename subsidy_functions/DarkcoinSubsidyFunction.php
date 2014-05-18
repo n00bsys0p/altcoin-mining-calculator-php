@@ -23,10 +23,10 @@ class DarkcoinSubsidyFunction implements SubsidyFunctionInterface
      * relating to the subsidy after this date.
      *
      * @param  integer $nHeight The block height for which to find the subsidy
-     * @param  integer $dDiff   The given block's difficulty
+     * @param  integer $dDiff   The given block's difficulty - we set this to 0 by default as the interface does not contain any other parameters
      * @return float
      */
-    public function getBlockValue($nHeight, $dDiff)
+    public function getBlockValue($nHeight, $dDiff = 0)
     {
         $nSubsidy = 0;
 

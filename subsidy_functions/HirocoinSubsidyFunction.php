@@ -11,14 +11,11 @@ class HirocoinSubsidyFunction implements SubsidyFunctionInterface
 {
     /**
      * Ported directly from Hirocoin source code, ignoring txfees
-     * $dDiff is not required for this subsidy so supply NULL or
-     * any other value.
      *
      * @param  integer $nHeight The block height for which to determine the reward
-     * @param  float   $dDiff   The difficulty of the last block
      * @return float
      */
-    public function getBlockValue($nHeight, $dDiff)
+    public function getBlockValue($nHeight)
     {
         $nSubsidy = 400; // Original block reward
         $nSubsidy >>= ($nHeight / 840000);
