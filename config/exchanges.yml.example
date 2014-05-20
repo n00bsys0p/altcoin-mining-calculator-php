@@ -99,4 +99,4 @@ Hashcoin:
     Allcoin:
         base_url: https://www.allcoin.com/api1
         uri: pair/hash_btc
-        json_key: data.trade_price
+        json_key: data.avg_24h

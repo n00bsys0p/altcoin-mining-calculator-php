@@ -55,6 +55,8 @@ class HashCalculator {
         $this->adaptor   = new $adaptorType($adaptor[$this->coin], $adaptorSubsidy);
         $this->exchanges = new ExchangeContainer($this->coin, $exchanges);
         $this->client    = new CachingHttpClient;
+        $db_dir          = APP_DIR . '/db/';
+        $this->db        = new \Flintstone\Flintstone::load();
     }
 
     /**
@@ -191,6 +193,11 @@ class HashCalculator {
         $result = $this->calculator->calculatePerDay($hashrate);
 
         return $result;
+    }
+
+    public function getHistoricalData()
+    {
+        // Stub for getting historical data from the database
     }
 
     /**
