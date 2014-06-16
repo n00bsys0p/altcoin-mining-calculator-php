@@ -69,6 +69,13 @@ Hashcoin:
     port: 64699
     user: hashcoinrpc
     pass: Y0urSup3rSecretP4s5word
+CannabisCoin:
+    type: \n00bsys0p\RpcAdaptor
+    subsidy_function: \n00bsys0p\CannabisCoinSubsidyFunction
+    host: 127.0.0.1
+    port: 39347
+    user: CannabisCoinrpc
+    pass: Y0urSup3rSecretP4s5word
 # Config settings for Abe based adaptors
 #Hirocoin:
 #    type: \n00bsys0p\AbeAdaptor
