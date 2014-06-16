@@ -13,6 +13,7 @@ require_once(APP_DIR . '/subsidy_functions/GlobalDenominationSubsidyFunction.php
 require_once(APP_DIR . '/subsidy_functions/HighFiveCoinSubsidyFunction.php');
 require_once(APP_DIR . '/subsidy_functions/GivecoinSubsidyFunction.php');
 require_once(APP_DIR . '/subsidy_functions/HashcoinSubsidyFunction.php');
+require_once(APP_DIR . '/subsidy_functions/CannabisCoinSubsidyFunction.php');
 
 $app = new \n00bsys0p\CalculatorApp($config);
 

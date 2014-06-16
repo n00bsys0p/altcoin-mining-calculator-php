@@ -47,7 +47,7 @@ Limecoin:
         get_params:
             market: BTC-LIM
         json_key: result.Bid
-Québecoin:
+Quebecoin:
     Bittrex:
         base_url: https://bittrex.com/api/v1/public
         uri: getticker
@@ -99,4 +99,12 @@ Hashcoin:
     Allcoin:
         base_url: https://www.allcoin.com/api1
         uri: pair/hash_btc
-        json_key: data.avg_24h
+        json_key: data.trade_price
+CannabisCoin:
+    AllCrypt:
+        base_url: www.allcrypt.com
+        uri: api
+        get_params:
+            method: singlemarketdata
+            marketid: 874
+        json_key: return.markets.CANN.lasttradeprice

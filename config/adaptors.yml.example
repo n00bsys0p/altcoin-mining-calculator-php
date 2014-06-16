@@ -20,7 +20,7 @@ Limecoin:
     port: 9031
     user: limecoinrpc
     pass: Y0urSup3rSecretP4s5word
-Québecoin:
+Quebecoin:
     type: \n00bsys0p\RpcAdaptor
     subsidy_function: \n00bsys0p\LimecoinSubsidyFunction
     host: 127.0.0.1

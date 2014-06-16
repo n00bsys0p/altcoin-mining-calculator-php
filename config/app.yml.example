@@ -7,10 +7,7 @@ coins:
     Darkcoin:
         code: DRK
         url: http://darkcoin.io/
-    Limecoin:
-        code: LIM
-        url: http://www.limecoin.org/
-    Québecoin:
+    Quebecoin:
         code: QBC
         url: http://www.qbc.io/
     Logicoin:
@@ -25,9 +22,6 @@ coins:
     HighFiveCoin:
         code: H5C
         url: http://h5coin.com/
-    Givecoin:
-        code: GIVE
-        url: http://givecoin.info/
-    Hashcoin:
-        code: HASH
-        url: http://www.hashcoin.me/
+    CannabisCoin:
+        code: CANN
+        url: http://cannabiscoin.net/
